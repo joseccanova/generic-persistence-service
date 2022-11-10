@@ -1,4 +1,4 @@
-package org.nanotek.ormservice;
+package org.nanotek.ormservice.service;
 
 import java.io.Serializable;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.nanotek.ormservice.Base;
 import org.nanotek.ormservice.api.SearchContainer;
 import org.nanotek.ormservice.validation.CreateValidationGroup;
 import org.nanotek.ormservice.validation.UpdateValidationGroup;
