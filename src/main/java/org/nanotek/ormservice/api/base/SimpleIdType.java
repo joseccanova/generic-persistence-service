@@ -30,6 +30,7 @@ public class SimpleIdType implements Base<Long>{
 	@NotNull(groups= {UpdateValidationGroup.class , CreateValidationGroup.class})
 	private Long providedId;
 	
+	@NotNull(groups= {UpdateValidationGroup.class , CreateValidationGroup.class})
 	@NotEmpty(groups= {UpdateValidationGroup.class , CreateValidationGroup.class})
 	@Column(name="name" , nullable = false)
 	private String name;
@@ -43,6 +44,22 @@ public class SimpleIdType implements Base<Long>{
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getProvidedId() {
+		return providedId;
+	}
+
+	public void setProvidedId(Long providedId) {
+		this.providedId = providedId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 }
