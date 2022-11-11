@@ -1,8 +1,12 @@
 package org.nanotek.ormservice;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import org.hibernate.cfg.Environment;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -62,10 +66,26 @@ public class BaseConfiguration {
 	@Bean(name = "entityManagerFactory")
 	@Qualifier(value="entityManagerFactory")
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory(@Autowired DataSource dataSource , @Autowired DefaultPersistenceUnitManager pum ) {
+		 Map<String, Object> jpaPropertiesMap = new HashMap<>();
+	        jpaPropertiesMap.put(Environment.FORMAT_SQL, true);
+	        jpaPropertiesMap.put(Environment.SHOW_SQL, true);
+	        jpaPropertiesMap.put("hibernate.globally_quoted_identifiers", true);
+	        jpaPropertiesMap.put("hibernate.transaction.flush_before_completion"  , true);
+	        jpaPropertiesMap.put("hibernate.transaction.auto_close_session" , true);
+			jpaPropertiesMap.put("hibernate.current_session_context_class" , "thread" );
+			jpaPropertiesMap.put("hibernate.enable_lazy_load_no_trans" , true);
+			jpaPropertiesMap.put("hibermate.hbm2ddl.auto" , "none" );
+			jpaPropertiesMap.put("hibernate.default_schema", "public");
+			jpaPropertiesMap.put("javax.persistence.schema-generation.scripts.action", "drop-and-create");
+			jpaPropertiesMap.put("javax.persistence.schema-generation.scripts.create-target", "c:\\softwares\\connemat\\create-connemat.sql");
+			jpaPropertiesMap.put("javax.persistence.schema-generation.scripts.drop-target" , "c:\\softwares\\connemat\\drop-connemat.sql");
+			
 		LocalContainerEntityManagerFactoryBean factory =  new LocalContainerEntityManagerFactoryBean();
+		factory.setJpaPropertyMap(jpaPropertiesMap);
 		factory.setDataSource(dataSource);
-		factory.setPersistenceUnitManager(pum);
+//		factory.setPersistenceUnitManager(pum);
 		factory.setPersistenceProviderClass(HibernatePersistenceProvider.class);
+		factory.setPackagesToScan(new String []{"org.nanotek.ormservice.api.base"});
 		return factory;
 	}
 	
@@ -73,7 +93,10 @@ public class BaseConfiguration {
 	@Qualifier(value="transactionManager")
 	public PlatformTransactionManager defaultTransactionManager(
 			@Autowired	@Qualifier("entityManagerFactory") EntityManagerFactory factory) {
-		return new JpaTransactionManager(factory);
+		JpaTransactionManager tm =  new JpaTransactionManager(factory);
+		tm.setPersistenceUnitName("pum");
+		tm.setEntityManagerFactory(factory);
+		return tm;
 	}
 
 
