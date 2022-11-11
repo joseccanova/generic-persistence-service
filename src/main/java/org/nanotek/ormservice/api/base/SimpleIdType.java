@@ -26,7 +26,6 @@ public class SimpleIdType implements Base<Long>{
 	@NotNull(groups=UpdateValidationGroup.class)
 	private Long id;
 	
-	@Id
 	@NotNull(groups= {UpdateValidationGroup.class , CreateValidationGroup.class})
 	private Long providedId;
 	

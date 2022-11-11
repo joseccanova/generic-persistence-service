@@ -20,7 +20,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @SpringBootConfiguration
 @EnableJpaRepositories(
 		basePackages = 
-	{"org.nanotek.ormservice.api.base"}
+	{"org.nanotek.ormservice.repository"}
 		, transactionManagerRef = "transactionManager")
 public class BaseConfiguration {
 
