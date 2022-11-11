@@ -1,0 +1,38 @@
+debug: true
+
+server:
+  #address: 192.168.0.49
+  port: 8080
+  servlet:
+    context-path: /orm-service
+
+http:
+    end-point: /orm-service
+    
+management:
+   endpoints:
+      web:
+         exposure:
+            include: info, health , mappings , caches , conditions , metrics , configprops , env , info , integrationgraph
+
+application:
+   baseUrl: orm-service
+            
+spring:
+  application:
+    name: orm-service
+  datasource:
+    jdbcUrl: jdbc:postgresql://127.0.0.1:5432/testdb
+    url: jdbc:postgresql://127.0.0.1:5432/testdb
+    username: postgres 
+    password: 123
+  #hikari:
+    #connectionTimeout: 30000
+    #maximumPoolSize: 250
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        ddl-auto: none 
