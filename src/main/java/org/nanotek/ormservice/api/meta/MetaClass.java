@@ -19,6 +19,9 @@ public class MetaClass implements IClass {
 	@JsonProperty("className")
 	protected String className; 
 	
+	@JsonProperty("classType")
+	protected Enum<?> classType;
+	
 	protected List<MetaDataAttribute> metaAttributes = new ArrayList<>();
 
 	@JsonIgnore
@@ -145,5 +148,18 @@ public class MetaClass implements IClass {
 
 	public List<Table> getReferencedTables() {
 		return referencedTables;
+	}
+	
+	public static enum MetaClassType {
+		MappedSuperClass , 
+		EntityClass
+	}
+
+	public Enum<?> getClassType() {
+		return classType;
+	}
+
+	public void setClassType(Enum<?> classType) {
+		this.classType = classType;
 	}
 }
