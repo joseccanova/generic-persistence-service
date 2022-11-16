@@ -29,6 +29,8 @@ import java.lang.ref.Reference;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+import org.nanotek.beans.sun.introspect.EventSetInfo;
+
 /**
  * An EventSetDescriptor describes a group of events that a given Java
  * bean fires.
@@ -255,7 +257,7 @@ public class EventSetDescriptor extends FeatureDescriptor {
         setListenerType(listenerType);
     }
 
-    public EventSetDescriptor(String base, org.nanotek.crawler.data.util.EventSetInfo eventSetInfo, Method... methods) {
+    public EventSetDescriptor(String base, EventSetInfo eventSetInfo, Method... methods) {
         setName(Introspector.decapitalize(base));
         setListenerMethods(methods);
         setAddListenerMethod(eventSetInfo.getAddMethod());

@@ -46,8 +46,8 @@ import org.nanotek.beans.sun.TypeResolver;
 import org.nanotek.beans.sun.WeakCache;
 import org.nanotek.beans.sun.finder.ClassFinder;
 import org.nanotek.beans.sun.introspect.ClassInfo;
+import org.nanotek.beans.sun.introspect.EventSetInfo;
 import org.nanotek.beans.sun.introspect.PropertyInfo;
-import org.nanotek.crawler.data.util.EventSetInfo;
 
 
 /**
