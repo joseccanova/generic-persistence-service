@@ -8,8 +8,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.EqualsAndHashCode;
 import schemacrawler.schema.Table;
 
+@EqualsAndHashCode
 @JsonInclude(value = Include.NON_NULL)
 public class MetaClass implements IClass {
 
@@ -28,19 +30,12 @@ public class MetaClass implements IClass {
 	private boolean hasPrimraryKey;
 
 	@JsonIgnore
-	protected Table table;
-
-	@JsonIgnore
 	protected List<MetaRelationClass> metaRelationsClasses;
 
 	protected MetaIdentity identity;
 
-	@JsonIgnore
-	private List<Table> referencedTables;
-	
 	public MetaClass() {
 		super();
-		this.referencedTables=new ArrayList<>();
 		metaRelationsClasses = new ArrayList<> ();
 	}
 
@@ -60,7 +55,6 @@ public class MetaClass implements IClass {
 		super();
 		this.tableName = tableName;
 		this.className = className;
-		this.table = table;
 		this.referencedTables=new ArrayList<>();
 	}
 
@@ -101,20 +95,12 @@ public class MetaClass implements IClass {
 
 	@Override
 	public boolean isHasPrimeraryKey() {
-		return  metaAttributes !=null && metaAttributes.stream().filter(a -> a.isId()).count() > 0;
+		return  hasPrimraryKey;//
 	}
 
 	@Override
 	public void setHasPrimeraryKey(boolean hasPrimeraryKey) {
 		this.hasPrimraryKey = hasPrimeraryKey;
-	}
-
-	public void setTable(Table t) {
-		this.table = t;
-	}
-
-	public Table getTable() {
-		return table;
 	}
 
 	public void addMetaRelationClass(MetaRelationClass mrc) {
@@ -142,14 +128,7 @@ public class MetaClass implements IClass {
 		this.metaRelationsClasses = metaRelationsClasses;
 	}
 
-	public void addReferencedTable(Table referencedTable) {
-		this.referencedTables.add(referencedTable);
-	}
 
-	public List<Table> getReferencedTables() {
-		return referencedTables;
-	}
-	
 	public static enum MetaClassType {
 		MappedSuperClass , 
 		EntityClass

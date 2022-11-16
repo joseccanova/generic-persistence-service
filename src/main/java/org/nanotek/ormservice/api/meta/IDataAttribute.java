@@ -7,10 +7,6 @@ public interface IDataAttribute {
 
 	java.lang.String toString();
 
-	boolean isId();
-
-	void setId(boolean isId);
-
 	String getColumnName();
 
 	void setColumnName(String columnName);
@@ -39,8 +35,8 @@ public interface IDataAttribute {
 
 	Map<String, Object> getAttributes();
 
-	List<String> getIdAliases();
+	List<String> getAliases();
 
-	void setIdAliases(List<String> idAliases);
+	void setAliases(List<String> idAliases);
 
 }
