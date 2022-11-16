@@ -56,9 +56,20 @@ public class MetaDataAttribute implements IDataAttribute {
 	@JsonIgnore
 	private MetaClass metaClass;
 	
+	@Getter
+	@Setter
+	private Enum<?> attributeType;
+	
 	public MetaDataAttribute(MetaClass mc) {
 		super();
 		this.metaClass=mc;
 	}
 	
+	public static enum AttributeType {
+		Single, 
+		Collection, 
+		Set, 
+		Map,
+		List
+	}
 }

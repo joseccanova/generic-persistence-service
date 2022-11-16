@@ -45,7 +45,6 @@ public class MetaClass implements IClass {
 		this.tableName = tableName;
 		this.className = className;
 		this.metaAttributes = metaAttributes;
-		this.referencedTables=new ArrayList<>();
 	}
 
 	
@@ -55,7 +54,6 @@ public class MetaClass implements IClass {
 		super();
 		this.tableName = tableName;
 		this.className = className;
-		this.referencedTables=new ArrayList<>();
 	}
 
 	@Override
@@ -131,7 +129,8 @@ public class MetaClass implements IClass {
 
 	public static enum MetaClassType {
 		MappedSuperClass , 
-		EntityClass
+		EntityClass, 
+		Embeddable
 	}
 
 	public Enum<?> getClassType() {
