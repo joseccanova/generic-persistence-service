@@ -39,7 +39,7 @@ public class MetaClassBasicTests {
 	DefaultListableBeanFactory beanFactory;
 	
 	@Test
-	public void basicTest() {
+	public void basicMetaClassCreationTest() {
 		MetaClass mt = createBasicMetaClass();
 		assertNotNull(beanFactory);
 		assertTrue(mt !=null);
@@ -54,7 +54,7 @@ public class MetaClassBasicTests {
 		return  MetaClass.builder()
 						.tableName("test")
 						.className("Test")
-						.classType(MetaClass.MetaClassType.MappedSuperClass)
+						.classType(MetaClass.MetaClassType.EntityClass)
 						.build();
 	}
 	
