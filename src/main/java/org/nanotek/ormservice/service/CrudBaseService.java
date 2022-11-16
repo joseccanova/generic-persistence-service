@@ -6,7 +6,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.nanotek.ormservice.Base;
+import org.nanotek.ormservice.IBase;
 import org.nanotek.ormservice.validation.CreateValidationGroup;
 import org.nanotek.ormservice.validation.UpdateValidationGroup;
 import org.springframework.beans.BeanUtils;
@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
-public interface CrudBaseService<T extends Base<ID>, ID extends Serializable> 
+public interface CrudBaseService<T extends IBase<ID>, ID extends Serializable> 
 extends BaseService<T,ID>{
 	/**
 	 * Saves a given entity. Use the returned instance for further operations as the save operation might have changed the

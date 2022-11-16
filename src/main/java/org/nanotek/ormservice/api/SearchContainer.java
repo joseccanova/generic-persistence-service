@@ -2,9 +2,9 @@ package org.nanotek.ormservice.api;
 
 import java.util.Map;
 
-import org.nanotek.ormservice.Base;
+import org.nanotek.ormservice.IBase;
 
-public class SearchContainer <T extends Base<?>>{
+public class SearchContainer <T extends IBase<?>>{
 
 	protected T entity;
 	

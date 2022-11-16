@@ -3,7 +3,7 @@ package org.nanotek.ormservice.controller;
 import java.io.Serializable;
 import java.net.URI;
 
-import org.nanotek.ormservice.Base;
+import org.nanotek.ormservice.IBase;
 import org.nanotek.ormservice.service.BaseService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,7 +17,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 public class EntityController 
-<T extends Base<ID>, ID extends Serializable , S extends BaseService<T,ID>> 
+<T extends IBase<ID>, ID extends Serializable , S extends BaseService<T,ID>> 
 extends PageableController<T, S>{
 
 	public EntityController(S serv) {

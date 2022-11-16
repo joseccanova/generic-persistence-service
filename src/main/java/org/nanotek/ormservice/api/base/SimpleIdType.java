@@ -10,14 +10,14 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import org.nanotek.ormservice.Base;
+import org.nanotek.ormservice.IBase;
 import org.nanotek.ormservice.validation.CreateValidationGroup;
 import org.nanotek.ormservice.validation.UpdateValidationGroup;
 
 @Entity
 @Table(name="single_id_table")
 @Valid
-public class SimpleIdType implements Base<Long>{
+public class SimpleIdType implements IBase<Long>{
 
 	private static final long serialVersionUID = -8993023295908048041L;
 	

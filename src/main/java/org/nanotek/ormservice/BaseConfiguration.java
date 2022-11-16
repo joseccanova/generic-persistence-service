@@ -1,5 +1,6 @@
 package org.nanotek.ormservice;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,25 +9,33 @@ import javax.sql.DataSource;
 
 import org.hibernate.cfg.Environment;
 import org.hibernate.jpa.HibernatePersistenceProvider;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.jpa.repository.support.CrudMethodMetadata;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import net.bytebuddy.dynamic.loading.InjectionClassLoader;
+import net.bytebuddy.dynamic.loading.MultipleParentClassLoader;
 
 @SpringBootConfiguration
 @EnableJpaRepositories(
 		basePackages = 
 	{"org.nanotek.ormservice.repository"}
 		, transactionManagerRef = "transactionManager")
-public class BaseConfiguration {
+public class BaseConfiguration implements ApplicationContextAware{
 
 	/*
 	 * @Bean(name="Reflections")
@@ -97,6 +106,30 @@ public class BaseConfiguration {
 		tm.setPersistenceUnitName("pum");
 		tm.setEntityManagerFactory(factory);
 		return tm;
+	}
+	
+	@Bean
+	@Primary
+	InjectionClassLoader injectionClassLoader() {
+		InjectionClassLoader ic = new  MultipleParentClassLoader(Thread.currentThread().getContextClassLoader() 
+				, Arrays.asList(getClass().getClassLoader() , CrudMethodMetadata.class.getClassLoader())  , 
+				false);
+		return ic;
+	}
+	
+	@Bean 
+	@Qualifier(value="myBf")
+	public DefaultListableBeanFactory defaultListableBeanFactory(@Autowired InjectionClassLoader classLoader )
+	{
+		DefaultListableBeanFactory v = new DefaultListableBeanFactory();
+		v.setParentBeanFactory(context);
+		v.setBeanClassLoader(classLoader);
+		return v;
+	}
+	ApplicationContext context;
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.context = applicationContext;
 	}
 
 

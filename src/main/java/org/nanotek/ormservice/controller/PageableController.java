@@ -3,7 +3,7 @@ package org.nanotek.ormservice.controller;
 import java.util.List;
 import java.util.Optional;
 
-import org.nanotek.ormservice.Base;
+import org.nanotek.ormservice.IBase;
 import org.nanotek.ormservice.api.SearchContainer;
 import org.nanotek.ormservice.service.BaseService;
 import org.springframework.data.domain.PageRequest;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-public abstract class PageableController<T extends Base<?> , S extends BaseService<T,?>> 
+public abstract class PageableController<T extends IBase<?> , S extends BaseService<T,?>> 
 extends BaseController<T, S> {
 	
 	

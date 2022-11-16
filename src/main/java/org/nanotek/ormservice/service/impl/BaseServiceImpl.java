@@ -5,7 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
 
-import org.nanotek.ormservice.Base;
+import org.nanotek.ormservice.IBase;
 import org.nanotek.ormservice.EntityExceptionSupplierFactory;
 import org.nanotek.ormservice.EntityRepository;
 import org.springframework.beans.BeanWrapper;
@@ -18,7 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 public abstract class BaseServiceImpl
-<T  extends Base<ID>, ID , R extends EntityRepository<T, ID>> 
+<T  extends IBase<ID>, ID , R extends EntityRepository<T, ID>> 
 extends SearchServiceImpl<T,R>{
 
 	@Autowired

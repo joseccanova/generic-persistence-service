@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.nanotek.ormservice.Base;
+import org.nanotek.ormservice.IBase;
 import org.nanotek.ormservice.EntityRepository;
 import org.nanotek.ormservice.api.SearchContainer;
 import org.springframework.data.domain.Example;
@@ -16,7 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 
 
-public abstract class SearchServiceImpl<T extends Base<?>, R extends EntityRepository<T , ?>> {
+public abstract class SearchServiceImpl<T extends IBase<?>, R extends EntityRepository<T , ?>> {
 
 	protected R repository;
 	

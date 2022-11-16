@@ -8,11 +8,17 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import schemacrawler.schema.Table;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
 @JsonInclude(value = Include.NON_NULL)
+@Builder
 public class MetaClass implements IClass {
 
 	@JsonProperty("tableName")
@@ -30,14 +36,9 @@ public class MetaClass implements IClass {
 	private boolean hasPrimraryKey;
 
 	@JsonIgnore
-	protected List<MetaRelationClass> metaRelationsClasses;
+	protected List<MetaRelationClass> metaRelationsClasses = new ArrayList<> ();
 
 	protected MetaIdentity identity;
-
-	public MetaClass() {
-		super();
-		metaRelationsClasses = new ArrayList<> ();
-	}
 
 	public MetaClass(String tableName, String className, 
 			List<MetaDataAttribute> metaAttributes) {

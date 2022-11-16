@@ -2,7 +2,7 @@ package org.nanotek.ormservice.controller;
 
 import java.util.List;
 
-import org.nanotek.ormservice.Base;
+import org.nanotek.ormservice.IBase;
 import org.nanotek.ormservice.service.BaseService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-public abstract class BaseController<T extends Base<?>  , S extends BaseService<T,?>> 
+public abstract class BaseController<T extends IBase<?>  , S extends BaseService<T,?>> 
 implements UrlBaseLocator {
 
 	public static final Integer MAX_FIND_ALL = Integer.MAX_VALUE-1;

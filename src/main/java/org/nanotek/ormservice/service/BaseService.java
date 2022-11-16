@@ -6,14 +6,14 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.nanotek.ormservice.Base;
+import org.nanotek.ormservice.IBase;
 import org.nanotek.ormservice.api.SearchContainer;
 import org.nanotek.ormservice.validation.CreateValidationGroup;
 import org.nanotek.ormservice.validation.UpdateValidationGroup;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
-public interface BaseService<T extends Base<ID>, ID extends Serializable> {
+public interface BaseService<T extends IBase<ID>, ID extends Serializable> {
 
 	@Transactional
 	List<T> findByEntityUsingExample(SearchContainer<T> entity , Integer start , Integer size);
