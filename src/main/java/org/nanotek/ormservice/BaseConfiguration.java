@@ -9,6 +9,7 @@ import javax.sql.DataSource;
 
 import org.hibernate.cfg.Environment;
 import org.hibernate.jpa.HibernatePersistenceProvider;
+import org.nanotek.ormservice.api.meta.builder.MetaClassClassBuilder;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -133,6 +134,10 @@ public class BaseConfiguration implements ApplicationContextAware{
 		this.context = applicationContext;
 	}
 
+	@Bean
+	public MetaClassClassBuilder getMetaClassClassBuilder() {
+		return new MetaClassClassBuilder();
+	}
 
 }
 

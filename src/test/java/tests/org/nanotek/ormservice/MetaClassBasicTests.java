@@ -1,6 +1,5 @@
 package tests.org.nanotek.ormservice;
 
-import static net.bytebuddy.matcher.ElementMatchers.named;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -11,29 +10,20 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.junit.jupiter.api.Test;
-import org.nanotek.ormservice.Base;
 import org.nanotek.ormservice.BaseConfiguration;
 import org.nanotek.ormservice.OrmServiceApplication;
 import org.nanotek.ormservice.api.meta.EntityAnnotation;
+import org.nanotek.ormservice.api.meta.MappedSuperClassAnnotation;
 import org.nanotek.ormservice.api.meta.MetaClass;
 import org.nanotek.ormservice.api.meta.MetaClassType;
 import org.nanotek.ormservice.api.meta.TableAnnotation;
+import org.nanotek.ormservice.api.meta.builder.MetaClassClassBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.fasterxml.jackson.annotation.JsonRootName;
-
-import lombok.extern.slf4j.Slf4j;
-import net.bytebuddy.ByteBuddy;
-import net.bytebuddy.ClassFileVersion;
-import net.bytebuddy.description.annotation.AnnotationDescription;
-import net.bytebuddy.description.type.TypeDefinition;
-import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
-import net.bytebuddy.implementation.FixedValue;
 
-@Slf4j
 @SpringBootTest(classes = {BaseConfiguration.class , OrmServiceApplication.class})
 public class MetaClassBasicTests {
 
@@ -42,12 +32,15 @@ public class MetaClassBasicTests {
 	@Autowired
 	DefaultListableBeanFactory beanFactory;
 	
+	@Autowired
+	MetaClassClassBuilder classBuilder;
+	
 	@Test
 	public void basicMetaClassCreationTest() {
 		MetaClass mt = createBasicMetaClass();
 		assertNotNull(beanFactory);
 		assertTrue(mt !=null);
-		Builder<?> bd = processClassMetaData(mt, beanFactory.getBeanClassLoader());
+		Builder<?> bd = classBuilder.build(mt, beanFactory.getBeanClassLoader());
 		Class<?> cls = bd.make().load(beanFactory.getBeanClassLoader()).getLoaded();
 		assertNotNull(cls);
 		assertEntityAnnotation(cls);
@@ -79,31 +72,6 @@ public class MetaClassBasicTests {
 		return cm;
 	}
 	
-	private Builder processClassMetaData(MetaClass cm11, ClassLoader classLoader) {
-//		processors.stream().forEach(p -> p.process(cm11));
-		String myClassName = cm11.getClassName();
-		log.debug("class name " + myClassName);
-		AnnotationDescription rootAnnotation =  AnnotationDescription.Builder.ofType(JsonRootName.class)
-				.define("value", myClassName)
-				.build();
-		
-//		Class<?> idClass = getIdClass(cm11);
-		//TODO:generate another strategy to produce an ID for the EntityClass.
-		Class<?> idClass = getIdClass(cm11);
-		TypeDefinition td = TypeDescription.Generic.Builder.parameterizedType(Base.class  , idClass).build();
-		Builder bd = new ByteBuddy(ClassFileVersion.JAVA_V8)
-						.subclass(td)
-						.name(PACKAGE+myClassName)
-						.annotateType(rootAnnotation)
-						.annotateType(processEntityType(cm11))
-						.annotateType(processTableType(cm11))
-						.withHashCodeEquals()
-						.withToString()
-						.method(named("getMetaClass"))
-						.intercept(FixedValue.value(MetaClass.class.cast(cm11)));
-			return bd;
-	}
-
 	private Annotation processTableType(MetaClass cm11) {
 		return new TableAnnotation(cm11.getTableName());
 	}
@@ -113,6 +81,8 @@ public class MetaClassBasicTests {
 		switch(cm.getClassType()) {
 		case EntityClass:
 			return new EntityAnnotation(cm.getClassName());
+		case MappedSuperClass:
+			return new MappedSuperClassAnnotation();
 		default: 
 			return null;
 		}
