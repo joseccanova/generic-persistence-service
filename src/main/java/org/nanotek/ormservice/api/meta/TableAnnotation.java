@@ -28,6 +28,10 @@ public class TableAnnotation extends MetaAnnotation implements Table{
 	@Setter
 	private String schema;
 	
+	public TableAnnotation(String name) {
+		this.name = name;
+	}
+	
 	@Override
 	public Class<? extends Annotation> annotationType() {
 		return Table.class;

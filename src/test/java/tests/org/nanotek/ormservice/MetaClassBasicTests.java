@@ -8,16 +8,16 @@ import java.lang.annotation.Annotation;
 import java.util.stream.Stream;
 
 import javax.persistence.Entity;
-import javax.persistence.Index;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import org.junit.jupiter.api.Test;
 import org.nanotek.ormservice.Base;
 import org.nanotek.ormservice.BaseConfiguration;
 import org.nanotek.ormservice.OrmServiceApplication;
+import org.nanotek.ormservice.api.meta.EntityAnnotation;
 import org.nanotek.ormservice.api.meta.MetaClass;
 import org.nanotek.ormservice.api.meta.MetaClassType;
+import org.nanotek.ormservice.api.meta.TableAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -81,10 +81,8 @@ public class MetaClassBasicTests {
 	
 	private Builder processClassMetaData(MetaClass cm11, ClassLoader classLoader) {
 //		processors.stream().forEach(p -> p.process(cm11));
-		String tableName =  cm11.getTableName();
 		String myClassName = cm11.getClassName();
 		log.debug("class name " + myClassName);
-		System.err.println("class name " + myClassName);
 		AnnotationDescription rootAnnotation =  AnnotationDescription.Builder.ofType(JsonRootName.class)
 				.define("value", myClassName)
 				.build();
@@ -107,14 +105,14 @@ public class MetaClassBasicTests {
 	}
 
 	private Annotation processTableType(MetaClass cm11) {
-		return new TableImpl(cm11.getTableName());
+		return new TableAnnotation(cm11.getTableName());
 	}
 
 	private Annotation processEntityType (MetaClass cm)
 	{
 		switch(cm.getClassType()) {
 		case EntityClass:
-			return new EntityImpl(cm.getClassName());
+			return new EntityAnnotation(cm.getClassName());
 		default: 
 			return null;
 		}
@@ -122,66 +120,6 @@ public class MetaClassBasicTests {
 	
 	private Class<?> getIdClass(MetaClass cm11) {
 		return Long.class;
-	}
-	
-	class TableImpl implements Table{
-
-		private String name;
-		
-		public TableImpl(String name2) {
-			this.name = name2;
-		}
-		
-		@Override
-		public Class<? extends Annotation> annotationType() {
-			return Table.class;
-		}
-
-		@Override
-		public String name() {
-			return name;
-		}
-
-		@Override
-		public String catalog() {
-			return "";
-		}
-
-		@Override
-		public String schema() {
-			return "";
-		}
-
-		@Override
-		public UniqueConstraint[] uniqueConstraints() {
-			return new UniqueConstraint[0];
-		}
-
-		@Override
-		public Index[] indexes() {
-			return new Index[0];
-		}
-		
-	}
-	
-	class EntityImpl implements Entity{
-
-		private String name;
-		
-		public EntityImpl(String name2) {
-			this.name = name2;
-		}
-		
-		@Override
-		public Class<? extends Annotation> annotationType() {
-			return Entity.class;
-		}
-
-		@Override
-		public String name() {
-			return name;
-		}
-		
 	}
 	
 }
