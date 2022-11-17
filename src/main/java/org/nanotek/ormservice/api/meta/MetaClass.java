@@ -38,12 +38,6 @@ public class MetaClass implements IClass {
 
 	protected MetaIdentity identity;
 
-	public static enum MetaClassType {
-		MappedSuperClass , 
-		EntityClass, 
-		EmbeddableClass
-	}
-
 	@Override
 	public boolean addMetaAttribute(MetaDataAttribute attr) {
 		return metaAttributes.add(attr);

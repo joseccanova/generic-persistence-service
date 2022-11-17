@@ -17,6 +17,7 @@ import org.nanotek.ormservice.Base;
 import org.nanotek.ormservice.BaseConfiguration;
 import org.nanotek.ormservice.OrmServiceApplication;
 import org.nanotek.ormservice.api.meta.MetaClass;
+import org.nanotek.ormservice.api.meta.MetaClassType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -74,7 +75,7 @@ public class MetaClassBasicTests {
 		MetaClass cm = new  MetaClass();
 						cm.setTableName("test");
 						cm.setClassName("Test");
-						cm.setClassType(MetaClass.MetaClassType.EntityClass);
+						cm.setClassType(MetaClassType.EntityClass);
 		return cm;
 	}
 	
