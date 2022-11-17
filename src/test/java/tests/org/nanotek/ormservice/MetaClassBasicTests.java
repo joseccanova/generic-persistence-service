@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.annotation.Annotation;
+import java.util.stream.Stream;
 
 import javax.persistence.Entity;
 import javax.persistence.Index;
@@ -22,8 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 
-import lombok.extern.java.Log;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.ClassFileVersion;
 import net.bytebuddy.description.annotation.AnnotationDescription;
@@ -32,7 +32,7 @@ import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.implementation.FixedValue;
 
-@Log4j2
+@Slf4j
 @SpringBootTest(classes = {BaseConfiguration.class , OrmServiceApplication.class})
 public class MetaClassBasicTests {
 
@@ -46,7 +46,6 @@ public class MetaClassBasicTests {
 		MetaClass mt = createBasicMetaClass();
 		assertNotNull(beanFactory);
 		assertTrue(mt !=null);
-		
 		Builder<?> bd = processClassMetaData(mt, beanFactory.getBeanClassLoader());
 		Class<?> cls = bd.make().load(beanFactory.getBeanClassLoader()).getLoaded();
 		assertNotNull(cls);
@@ -56,25 +55,34 @@ public class MetaClassBasicTests {
 
 	private void assertEntityAnnotation(Class<?> cls) {
 		Annotation[] anottations = cls.getAnnotations();
+		boolean b = Stream
+			.of(anottations)
+			.filter(a -> a.annotationType().equals(Entity.class)).count()>0;
+		assertTrue(b);
 	}
 
 	private void assertTableAnnotation(Class<?> cls) {
+		Annotation[] anottations = cls.getAnnotations();
+		boolean b = Stream
+			.of(anottations)
+			.anyMatch(a -> a.annotationType().equals(Table.class));
+		assertTrue(b);
 	}
 	
 	//TODO: Promote methods for a specialized adapter / strategy classes.
 	private MetaClass createBasicMetaClass() {
-		return  MetaClass.builder()
-						.tableName("test")
-						.className("Test")
-						.classType(MetaClass.MetaClassType.EntityClass)
-						.build();
+		MetaClass cm = new  MetaClass();
+						cm.setTableName("test");
+						cm.setClassName("Test");
+						cm.setClassType(MetaClass.MetaClassType.EntityClass);
+		return cm;
 	}
 	
 	private Builder processClassMetaData(MetaClass cm11, ClassLoader classLoader) {
 //		processors.stream().forEach(p -> p.process(cm11));
 		String tableName =  cm11.getTableName();
 		String myClassName = cm11.getClassName();
-		log.debug(myClassName);
+		log.debug("class name " + myClassName);
 		System.err.println("class name " + myClassName);
 		AnnotationDescription rootAnnotation =  AnnotationDescription.Builder.ofType(JsonRootName.class)
 				.define("value", myClassName)
