@@ -96,8 +96,8 @@ public class MetaClassBasicTests {
 						.subclass(td)
 						.name(PACKAGE+myClassName)
 						.annotateType(rootAnnotation)
-						.annotateType(new EntityImpl(myClassName))
-						.annotateType(new TableImpl(tableName))
+						.annotateType(processEntityType(cm11))
+						.annotateType(processTableType(cm11))
 						.withHashCodeEquals()
 						.withToString()
 						.method(named("getMetaClass"))
@@ -105,6 +105,20 @@ public class MetaClassBasicTests {
 			return bd;
 	}
 
+	private Annotation processTableType(MetaClass cm11) {
+		return new TableImpl(cm11.getTableName());
+	}
+
+	private Annotation processEntityType (MetaClass cm)
+	{
+		switch(cm.getClassType()) {
+		case EntityClass:
+			return new EntityImpl(cm.getClassName());
+		default: 
+			return null;
+		}
+	}
+	
 	private Class<?> getIdClass(MetaClass cm11) {
 		return Long.class;
 	}
@@ -159,7 +173,6 @@ public class MetaClassBasicTests {
 		
 		@Override
 		public Class<? extends Annotation> annotationType() {
-			// TODO Auto-generated method stub
 			return Entity.class;
 		}
 

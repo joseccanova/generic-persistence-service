@@ -26,7 +26,7 @@ public class MetaClass implements IClass {
 	protected String className; 
 	
 	@JsonProperty("classType")
-	protected Enum<?> classType;
+	protected MetaClassType classType;
 	
 	protected List<MetaDataAttribute> metaAttributes;
 
