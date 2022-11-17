@@ -126,6 +126,7 @@ public class BaseConfiguration implements ApplicationContextAware{
 		v.setBeanClassLoader(classLoader);
 		return v;
 	}
+	
 	ApplicationContext context;
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

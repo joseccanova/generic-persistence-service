@@ -22,6 +22,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 
+import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.ClassFileVersion;
 import net.bytebuddy.description.annotation.AnnotationDescription;
@@ -30,6 +32,7 @@ import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.implementation.FixedValue;
 
+@Log4j2
 @SpringBootTest(classes = {BaseConfiguration.class , OrmServiceApplication.class})
 public class MetaClassBasicTests {
 
@@ -47,9 +50,18 @@ public class MetaClassBasicTests {
 		Builder<?> bd = processClassMetaData(mt, beanFactory.getBeanClassLoader());
 		Class<?> cls = bd.make().load(beanFactory.getBeanClassLoader()).getLoaded();
 		assertNotNull(cls);
-
+		assertEntityAnnotation(cls);
+		assertTableAnnotation(cls);
 	}
 
+	private void assertEntityAnnotation(Class<?> cls) {
+		Annotation[] anottations = cls.getAnnotations();
+	}
+
+	private void assertTableAnnotation(Class<?> cls) {
+	}
+	
+	//TODO: Promote methods for a specialized adapter / strategy classes.
 	private MetaClass createBasicMetaClass() {
 		return  MetaClass.builder()
 						.tableName("test")
@@ -62,12 +74,14 @@ public class MetaClassBasicTests {
 //		processors.stream().forEach(p -> p.process(cm11));
 		String tableName =  cm11.getTableName();
 		String myClassName = cm11.getClassName();
+		log.debug(myClassName);
 		System.err.println("class name " + myClassName);
 		AnnotationDescription rootAnnotation =  AnnotationDescription.Builder.ofType(JsonRootName.class)
 				.define("value", myClassName)
 				.build();
 		
 //		Class<?> idClass = getIdClass(cm11);
+		//TODO:generate another strategy to produce an ID for the EntityClass.
 		Class<?> idClass = getIdClass(cm11);
 		TypeDefinition td = TypeDescription.Generic.Builder.parameterizedType(Base.class  , idClass).build();
 		Builder bd = new ByteBuddy(ClassFileVersion.JAVA_V8)
