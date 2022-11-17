@@ -20,11 +20,9 @@ public class TableAnnotation extends MetaAnnotation implements Table{
 	@Setter
 	private String name;
 	
-
 	@Getter
 	@Setter
 	private String catalog;
-	
 
 	@Getter
 	@Setter
@@ -47,7 +45,7 @@ public class TableAnnotation extends MetaAnnotation implements Table{
 
 	@Override
 	public String schema() {
-		return Optional.ofNullable(schema).orElse(schema);
+		return Optional.ofNullable(schema).orElse("");
 	}
 
 	@Override
