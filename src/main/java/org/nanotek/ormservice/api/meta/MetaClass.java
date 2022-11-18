@@ -1,5 +1,6 @@
 package org.nanotek.ormservice.api.meta;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -28,7 +29,7 @@ public class MetaClass implements IClass {
 	@JsonProperty("classType")
 	protected MetaClassType classType;
 	
-	protected List<MetaDataAttribute> metaAttributes;
+	protected List<MetaDataAttribute> metaAttributes = new ArrayList<MetaDataAttribute>();
 
 	@JsonIgnore
 	private boolean hasPrimraryKey;

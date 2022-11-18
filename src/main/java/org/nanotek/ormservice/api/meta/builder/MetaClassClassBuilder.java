@@ -6,6 +6,7 @@ import java.lang.annotation.Annotation;
 
 import org.apache.naming.factory.BeanFactory;
 import org.nanotek.ormservice.Base;
+import org.nanotek.ormservice.Holder;
 import org.nanotek.ormservice.api.meta.EntityAnnotation;
 import org.nanotek.ormservice.api.meta.MappedSuperClassAnnotation;
 import org.nanotek.ormservice.api.meta.MetaClass;
@@ -61,7 +62,21 @@ public class MetaClassClassBuilder {
 						.withToString()
 						.method(named("getMetaClass"))
 						.intercept(FixedValue.value(MetaClass.class.cast(cm11)));
-			return bd;
+		  return  processAttributes(bd , cm11);
+	}
+
+	@SuppressWarnings("rawtypes")
+	private Builder processAttributes(Builder bd, MetaClass cm11) {
+		MetaClassAttributeBuilder mab = new MetaClassAttributeBuilder();
+		var holder = new Holder<Builder>().put(bd);
+		cm11
+		.getMetaAttributes()
+		.stream()
+		.forEach(att -> { 
+			Builder updatedBuilder = mab.build(holder.get(), att);	
+			holder.put(updatedBuilder);
+		});
+		return holder.get().orElseThrow();
 	}
 
 	private Annotation processTableType(MetaClass cm11) {

@@ -23,8 +23,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableScheduling
 @EnableMBeanExport
 public class OrmServiceApplication {
-
-
 	
 	public static void main(String[] args) {
 		SpringApplication.run(OrmServiceApplication.class, args);
