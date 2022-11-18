@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.util.stream.Stream;
 
 import javax.persistence.Entity;
@@ -39,19 +40,42 @@ public class MetaClassBasicTests {
 	public void basicMetaClassCreationTest() {
 		MetaClass mt = createBasicMetaClass();
 		assertNotNull(beanFactory);
-		assertTrue(mt !=null);
+		assertNotNull(mt);
 		Builder<?> bd = classBuilder.build(mt, beanFactory.getBeanClassLoader());
 		Class<?> cls = bd.make().load(beanFactory.getBeanClassLoader()).getLoaded();
 		assertNotNull(cls);
 		assertEntityAnnotation(cls);
 		assertTableAnnotation(cls);
+		try {
+			Object obj = cls.newInstance();
+			assertNotNull(obj);
+		} catch (Exception e) {
+			e.printStackTrace();
+			assertTrue(false);
+		}
+	}
+	
+	@Test
+	public void classAndAttributesCreationTest() {
+		MetaClass mt = createBasicMetaClassAndPopulateWithAttributes();
+	}
+
+	private MetaClass createBasicMetaClassAndPopulateWithAttributes() {
+		MetaClass mt = createBasicMetaClass();
+		populateWithAttributes(mt);
+		return mt;
+	}
+
+	private void populateWithAttributes(MetaClass mt) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	private void assertEntityAnnotation(Class<?> cls) {
 		Annotation[] anottations = cls.getAnnotations();
 		boolean b = Stream
 			.of(anottations)
-			.filter(a -> a.annotationType().equals(Entity.class)).count()>0;
+			.filter(a -> a.annotationType().equals(Entity.class)).count()==1;
 		assertTrue(b);
 	}
 
@@ -59,37 +83,16 @@ public class MetaClassBasicTests {
 		Annotation[] anottations = cls.getAnnotations();
 		boolean b = Stream
 			.of(anottations)
-			.anyMatch(a -> a.annotationType().equals(Table.class));
+			.filter(a -> a.annotationType().equals(Table.class)).count()==1;
 		assertTrue(b);
 	}
 	
-	//TODO: Promote methods for a specialized adapter / strategy classes.
 	private MetaClass createBasicMetaClass() {
 		MetaClass cm = new  MetaClass();
 						cm.setTableName("test");
 						cm.setClassName("Test");
 						cm.setClassType(MetaClassType.EntityClass);
 		return cm;
-	}
-	
-	private Annotation processTableType(MetaClass cm11) {
-		return new TableAnnotation(cm11.getTableName());
-	}
-
-	private Annotation processEntityType (MetaClass cm)
-	{
-		switch(cm.getClassType()) {
-		case EntityClass:
-			return new EntityAnnotation(cm.getClassName());
-		case MappedSuperClass:
-			return new MappedSuperClassAnnotation();
-		default: 
-			return null;
-		}
-	}
-	
-	private Class<?> getIdClass(MetaClass cm11) {
-		return Long.class;
 	}
 	
 }
