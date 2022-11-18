@@ -36,13 +36,10 @@ public class MetaClassClassBuilder {
 
 	public static final String PACKAGE  = "org.nanotek.meta.entities.";
 	
-	@Autowired
-	private DefaultListableBeanFactory beanFactory;
-	
 	public MetaClassClassBuilder() {
 	}
 	
-	public Builder build(MetaClass cm11, ClassLoader classLoader) {
+	public Builder build(MetaClass cm11) {
 //		processors.stream().forEach(p -> p.process(cm11));
 		String myClassName = cm11.getClassName();
 		log.debug("class name " + myClassName);

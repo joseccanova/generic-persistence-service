@@ -9,7 +9,7 @@ public class MetaClassAttributeBuilder {
 	public MetaClassAttributeBuilder() {
 	}
 
-	public Builder build(Builder builder , MetaClass cm11, ClassLoader classLoader) {
+	public Builder build(Builder builder , MetaClass cm11) {
 		return null;
 	}
 }

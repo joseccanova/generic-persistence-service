@@ -3,10 +3,10 @@ package org.nanotek.ormservice.api.meta;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +16,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class MetaDataAttribute implements IDataAttribute {
 
 	@Getter
@@ -26,6 +27,7 @@ public class MetaDataAttribute implements IDataAttribute {
 	@Setter
 	@JsonProperty("columnName")
 	protected String columnName;
+	//TODO:Fix Length to integer
 	@Getter
 	@Setter
 	@JsonProperty("length")
@@ -53,17 +55,7 @@ public class MetaDataAttribute implements IDataAttribute {
 	
 	@Getter
 	@Setter
-	@JsonIgnore
-	private MetaClass metaClass;
-	
-	@Getter
-	@Setter
-	private Enum<?> attributeType;
-	
-	public MetaDataAttribute(MetaClass mc) {
-		super();
-		this.metaClass=mc;
-	}
+	private AttributeType attributeType;
 	
 	public static enum AttributeType {
 		Single, 

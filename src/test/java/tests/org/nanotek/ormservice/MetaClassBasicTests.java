@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.util.stream.Stream;
 
 import javax.persistence.Entity;
@@ -13,11 +12,10 @@ import javax.persistence.Table;
 import org.junit.jupiter.api.Test;
 import org.nanotek.ormservice.BaseConfiguration;
 import org.nanotek.ormservice.OrmServiceApplication;
-import org.nanotek.ormservice.api.meta.EntityAnnotation;
-import org.nanotek.ormservice.api.meta.MappedSuperClassAnnotation;
 import org.nanotek.ormservice.api.meta.MetaClass;
 import org.nanotek.ormservice.api.meta.MetaClassType;
-import org.nanotek.ormservice.api.meta.TableAnnotation;
+import org.nanotek.ormservice.api.meta.MetaDataAttribute;
+import org.nanotek.ormservice.api.meta.MetaDataAttribute.AttributeType;
 import org.nanotek.ormservice.api.meta.builder.MetaClassClassBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -28,7 +26,6 @@ import net.bytebuddy.dynamic.DynamicType.Builder;
 @SpringBootTest(classes = {BaseConfiguration.class , OrmServiceApplication.class})
 public class MetaClassBasicTests {
 
-	private final String PACKAGE = "org.nanotek.";
 	
 	@Autowired
 	DefaultListableBeanFactory beanFactory;
@@ -41,12 +38,14 @@ public class MetaClassBasicTests {
 		MetaClass mt = createBasicMetaClass();
 		assertNotNull(beanFactory);
 		assertNotNull(mt);
-		Builder<?> bd = classBuilder.build(mt, beanFactory.getBeanClassLoader());
+		Builder<?> bd = classBuilder.build(mt);
 		Class<?> cls = bd.make().load(beanFactory.getBeanClassLoader()).getLoaded();
 		assertNotNull(cls);
 		assertEntityAnnotation(cls);
 		assertTableAnnotation(cls);
 		try {
+			Object bean = beanFactory.createBean(cls);
+			assertNotNull(bean);
 			Object obj = cls.newInstance();
 			assertNotNull(obj);
 		} catch (Exception e) {
@@ -67,8 +66,28 @@ public class MetaClassBasicTests {
 	}
 
 	private void populateWithAttributes(MetaClass mt) {
-		// TODO Auto-generated method stub
-		
+			mt.addMetaAttribute(createLongMetaAttribute());
+			mt.addMetaAttribute(createStringMetaAttribute());
+	}
+
+	private MetaDataAttribute createLongMetaAttribute() {
+		return MetaDataAttribute
+				.builder()
+				.attributeType(AttributeType.Single)
+				.fieldName("t1")
+				.clazz(Long.class)
+				.columnName("t1").build();
+	}
+
+	private MetaDataAttribute createStringMetaAttribute() {
+		return MetaDataAttribute
+				.builder()
+				.attributeType(AttributeType.Single)
+				.fieldName("t2")
+				.clazz(String.class)
+				.columnName("t2")
+				.length("255")
+				.build();
 	}
 
 	private void assertEntityAnnotation(Class<?> cls) {
