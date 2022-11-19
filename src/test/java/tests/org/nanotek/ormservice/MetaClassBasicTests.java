@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.stream.Stream;
 
 import javax.persistence.Entity;
@@ -35,7 +36,7 @@ public class MetaClassBasicTests {
 	
 	@Test
 	public void basicMetaClassCreationTest() {
-		MetaClass mt = createBasicMetaClass();
+		MetaClass mt = createBasicMetaClassAndPopulateWithAttributes();
 		assertNotNull(beanFactory);
 		assertNotNull(mt);
 		Builder<?> bd = classBuilder.build(mt);
@@ -48,12 +49,27 @@ public class MetaClassBasicTests {
 			assertNotNull(bean);
 			Object obj = cls.newInstance();
 			assertNotNull(obj);
+			assertTrue( obj.getClass().getDeclaredFields().length>1);
+			verifyLongField(cls.getDeclaredFields());
+			verifyStringField(cls.getDeclaredFields());
 		} catch (Exception e) {
 			e.printStackTrace();
 			assertTrue(false);
 		}
 	}
 	
+	private void verifyStringField(Field[] declaredFields) {
+		var vv = Stream.of(declaredFields)
+				.filter(f -> f.getType().equals(String.class)).count() > 0;
+				assertTrue(vv);		
+	}
+
+	private void verifyLongField(Field[] declaredFields) {
+		var vv = Stream.of(declaredFields)
+		.filter(f -> f.getType().equals(Long.class)).count() > 0;
+		assertTrue(vv);
+	}
+
 	@Test
 	public void classAndAttributesCreationTest() {
 		MetaClass mt = createBasicMetaClassAndPopulateWithAttributes();

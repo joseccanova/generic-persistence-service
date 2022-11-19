@@ -68,7 +68,7 @@ public class MetaClassClassBuilder {
 	@SuppressWarnings("rawtypes")
 	private Builder processAttributes(Builder bd, MetaClass cm11) {
 		MetaClassAttributeBuilder mab = new MetaClassAttributeBuilder();
-		var holder = new Holder<Builder>().put(bd);
+		var holder = new Holder<Builder<?>>().put(bd);
 		cm11
 		.getMetaAttributes()
 		.stream()
