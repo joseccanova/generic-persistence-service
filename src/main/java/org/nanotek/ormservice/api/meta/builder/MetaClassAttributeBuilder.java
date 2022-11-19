@@ -11,7 +11,7 @@ public class MetaClassAttributeBuilder {
 	public MetaClassAttributeBuilder() {
 	}
 
-	public Builder<?> build(Optional<Builder<?>> builder , MetaDataAttribute att) {
+	public static Builder<?> build(Optional<Builder<?>> builder , MetaDataAttribute att) {
 		return builder
 				.get()
 				.defineProperty(att.getFieldName(), MetaAttributeTypeDescriptionBuilder.prepare(att).build())
