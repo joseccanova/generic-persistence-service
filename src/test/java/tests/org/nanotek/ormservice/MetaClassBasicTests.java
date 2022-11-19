@@ -84,6 +84,7 @@ public class MetaClassBasicTests {
 	private void populateWithAttributes(MetaClass mt) {
 			mt.addMetaAttribute(createLongMetaAttribute());
 			mt.addMetaAttribute(createStringMetaAttribute());
+			mt.addMetaAttribute(createListMetaAttribute());
 	}
 
 	private MetaDataAttribute createLongMetaAttribute() {
@@ -103,6 +104,16 @@ public class MetaClassBasicTests {
 				.clazz(String.class)
 				.columnName("t2")
 				.length("255")
+				.build();
+	}
+	
+	private MetaDataAttribute createListMetaAttribute() {
+		return MetaDataAttribute
+				.builder()
+				.attributeType(AttributeType.List)
+				.fieldName("t3")
+				.clazz(Long.class)
+				.columnName("t3")
 				.build();
 	}
 

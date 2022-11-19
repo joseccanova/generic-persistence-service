@@ -1,13 +1,18 @@
 package org.nanotek.ormservice.api.meta.builder;
 
 import java.lang.annotation.Annotation;
+import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 
+import org.nanotek.ormservice.api.meta.ColumnTypeAnnotation;
 import org.nanotek.ormservice.api.meta.MetaDataAttribute;
 
-import lombok.Data;
+import net.bytebuddy.description.type.TypeDefinition;
+import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 
 public class MetaClassAttributeBuilder {
@@ -18,8 +23,34 @@ public class MetaClassAttributeBuilder {
 	public Builder<?> build(Optional<Builder<?>> builder , MetaDataAttribute att) {
 		return builder
 				.get()
-				.defineProperty(att.getFieldName(), att.getClazz())
+				.defineProperty(att.getFieldName(), processPropertyType(att))
 				.annotateField(verifyAnnotationType(att));
+	}
+
+	private TypeDefinition processPropertyType(MetaDataAttribute att) {
+		switch (att.getAttributeType()) {
+		case Single:
+			return defineSimpleType(att);
+		case List:
+			return defineListType(att);
+		case Map:
+			return defineMapType(att);
+		default:
+			return null;
+		}
+	}
+
+	private TypeDefinition defineSimpleType(MetaDataAttribute att) {
+		return TypeDescription.Generic.Builder.rawType(att.getClazz()).build(); 
+	}
+	
+	private TypeDefinition defineListType(MetaDataAttribute att) {
+		return TypeDescription.Generic.Builder.parameterizedType(List.class, att.getClazz()).build(); 
+	}
+	
+	
+	private TypeDefinition defineMapType(MetaDataAttribute att) {
+		return TypeDescription.Generic.Builder.parameterizedType(List.class, att.getClazz()).build(); 
 	}
 
 	private Annotation verifyAnnotationType(MetaDataAttribute att) {
@@ -43,83 +74,16 @@ public class MetaClassAttributeBuilder {
 		return null;
 	}
 
+	//TODO: refine this ... will be moved for a second processing on class.
 	private Annotation listType(MetaDataAttribute a) {
-		return null;
+		return new ManyToOneType();
 	}
 
 	private Annotation columnType(MetaDataAttribute a) {
-		var ct = new ColumnType();
+		var ct = new ColumnTypeAnnotation();
 		ct.setName(a.getColumnName());
 		ct.setNullable(!a.isRequired());
 		return ct;
 	}
 	
-	@Data
-	class ColumnType implements javax.persistence.Column{
-
-		private String name = "";
-		private boolean unique = false;
-		private boolean nullable = true;
-		private boolean insertable = true;
-		private boolean updatable = true;
-		private String columnDefinition = "";;
-		private String table = "";;
-		private int length;
-		private int precision;
-		private int scale;
-
-		@Override
-		public Class<? extends Annotation> annotationType() {
-			return Column.class;
-		}
-
-		@Override
-		public String name() {
-			return name;
-		}
-
-		@Override
-		public boolean unique() {
-			return unique;
-		}
-
-		@Override
-		public boolean nullable() {
-			return nullable;
-		}
-
-		@Override
-		public boolean insertable() {
-			return insertable;
-		}
-
-		@Override
-		public boolean updatable() {
-			return updatable;
-		}
-
-		@Override
-		public String columnDefinition() {
-			return columnDefinition;
-		}
-
-		@Override
-		public String table() {
-			return "";
-		}
-
-		@Override
-		public int length() {
-			return length;
-		}
-
-		@Override
-		public int precision() {
-			return precision;
-		}
-
-		@Override
-		public int scale() {
-			return scale;
-		}}
 }

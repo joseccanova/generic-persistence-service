@@ -20,6 +20,11 @@ public class MetaIdentity {
 	private String name;
 	private List<MetaDataAttribute> attributes; 
 	
-	public static enum IdentityType {}
+	public static enum IdentityType {
+		Identity,
+		Single,
+		Embeddable
+	}
+	
 
 }
