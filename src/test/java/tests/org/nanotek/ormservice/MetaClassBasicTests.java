@@ -41,7 +41,7 @@ public class MetaClassBasicTests {
 	@Test
 	public void basicMetaClassCreationTest() {
 		MetaClass mt = createBasicMetaClassAndPopulateWithAttributes();
-		createBasicMetaClassAndPopulateWithIdentityAndAttributes(mt);
+		createIdentity(mt);
 		assertNotNull(beanFactory);
 		assertNotNull(mt);
 		Builder<?> bd = classBuilder.build(mt);
@@ -87,7 +87,7 @@ public class MetaClassBasicTests {
 		MetaClass mt = createBasicMetaClassAndPopulateWithAttributes();
 	}
 
-	private void createBasicMetaClassAndPopulateWithIdentityAndAttributes(MetaClass mc) {
+	private void createIdentity(MetaClass mc) {
 		MetaIdentity mt = createBasicMetaIdentity();
 		mc.setIdentity(mt);
 	}
