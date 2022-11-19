@@ -4,15 +4,12 @@ import static net.bytebuddy.matcher.ElementMatchers.named;
 
 import java.lang.annotation.Annotation;
 
-import org.apache.naming.factory.BeanFactory;
 import org.nanotek.ormservice.Base;
 import org.nanotek.ormservice.Holder;
 import org.nanotek.ormservice.api.meta.EntityAnnotation;
 import org.nanotek.ormservice.api.meta.MappedSuperClassAnnotation;
 import org.nanotek.ormservice.api.meta.MetaClass;
 import org.nanotek.ormservice.api.meta.TableAnnotation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 
