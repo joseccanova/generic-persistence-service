@@ -20,9 +20,10 @@ import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.description.type.TypeDefinition;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
+import net.bytebuddy.dynamic.DynamicType.Builder.FieldDefinition.Optional;
 import net.bytebuddy.implementation.FixedValue;
 
-
+//TODO: remake this class ... code is weird.
 /**
  * Process the creation of the ByteBuddy Builder that will generate the class definition.
  * 
@@ -36,6 +37,7 @@ public class MetaClassClassBuilder {
 	
 	public MetaClassClassBuilder() {
 	}
+	
 	
 	public Builder build(MetaClass cm11) {
 //		processors.stream().forEach(p -> p.process(cm11));
@@ -59,7 +61,12 @@ public class MetaClassClassBuilder {
 						.withToString()
 						.method(named("getMetaClass"))
 						.intercept(FixedValue.value(MetaClass.class.cast(cm11)));
+		  bd = processMetaIdentity(bd , cm11);
 		  return  processAttributes(bd , cm11);
+	}
+
+	private Builder processMetaIdentity(Builder bd, MetaClass cm11) {
+		return bd.defineProperty(cm11.getIdentity().getName(), MetaClassIdentityBuilder.prepare(cm11).build()).annotateField(MetaClassIdentityAnnotationBuilder.build());
 	}
 
 	@SuppressWarnings("rawtypes")

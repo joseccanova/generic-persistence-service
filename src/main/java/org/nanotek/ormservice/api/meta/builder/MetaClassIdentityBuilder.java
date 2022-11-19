@@ -4,7 +4,6 @@ import org.nanotek.ormservice.api.meta.MetaClass;
 import org.nanotek.ormservice.api.meta.MetaIdentity;
 
 import net.bytebuddy.description.type.TypeDefinition;
-import net.bytebuddy.description.type.TypeDescription;
 
 public class MetaClassIdentityBuilder {
 
@@ -33,7 +32,8 @@ public class MetaClassIdentityBuilder {
 	
 	static class IdentityTypeDefinitionBuilder {
 		static TypeDefinition build(MetaIdentity identity) {
-			return null;
+			assert(identity.getAttributes().size() == 1);
+			return MetaAttributeTypeDescriptionBuilder.prepare(identity.getAttributes().get(0)).build();
 		}
 	}
 	

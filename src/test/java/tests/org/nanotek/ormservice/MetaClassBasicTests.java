@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -18,6 +19,7 @@ import org.nanotek.ormservice.api.meta.MetaClass;
 import org.nanotek.ormservice.api.meta.MetaClassType;
 import org.nanotek.ormservice.api.meta.MetaDataAttribute;
 import org.nanotek.ormservice.api.meta.MetaDataAttribute.AttributeType;
+import org.nanotek.ormservice.api.meta.MetaIdentity;
 import org.nanotek.ormservice.api.meta.builder.MetaClassClassBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -35,9 +37,11 @@ public class MetaClassBasicTests {
 	@Autowired
 	MetaClassClassBuilder classBuilder;
 	
+	//TODO: Fix Id annotation and property test.
 	@Test
 	public void basicMetaClassCreationTest() {
 		MetaClass mt = createBasicMetaClassAndPopulateWithAttributes();
+		createBasicMetaClassAndPopulateWithIdentityAndAttributes(mt);
 		assertNotNull(beanFactory);
 		assertNotNull(mt);
 		Builder<?> bd = classBuilder.build(mt);
@@ -81,6 +85,21 @@ public class MetaClassBasicTests {
 	@Test
 	public void classAndAttributesCreationTest() {
 		MetaClass mt = createBasicMetaClassAndPopulateWithAttributes();
+	}
+
+	private void createBasicMetaClassAndPopulateWithIdentityAndAttributes(MetaClass mc) {
+		MetaIdentity mt = createBasicMetaIdentity();
+		mc.setIdentity(mt);
+	}
+	
+	private MetaIdentity createBasicMetaIdentity() {
+		return MetaIdentity.builder().attributes(createLongIdentityAttribute() ).name("testId").type(MetaIdentity.IdentityType.Identity).build();
+	}
+
+	private List< MetaDataAttribute > createLongIdentityAttribute() {
+		var list = new ArrayList<MetaDataAttribute>();
+		list.add(MetaDataAttribute.builder().attributeType(AttributeType.Single).fieldName("testId").clazz(Long.class).required(true).build());
+		return list;
 	}
 
 	private MetaClass createBasicMetaClassAndPopulateWithAttributes() {
