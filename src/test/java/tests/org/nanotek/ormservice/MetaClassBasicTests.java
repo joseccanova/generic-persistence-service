@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.stream.Stream;
 
 import javax.persistence.Entity;
@@ -52,6 +53,7 @@ public class MetaClassBasicTests {
 			assertTrue( obj.getClass().getDeclaredFields().length>1);
 			verifyLongField(cls.getDeclaredFields());
 			verifyStringField(cls.getDeclaredFields());
+			verifyListField(cls.getDeclaredFields());
 		} catch (Exception e) {
 			e.printStackTrace();
 			assertTrue(false);
@@ -67,6 +69,12 @@ public class MetaClassBasicTests {
 	private void verifyLongField(Field[] declaredFields) {
 		var vv = Stream.of(declaredFields)
 		.filter(f -> f.getType().equals(Long.class)).count() > 0;
+		assertTrue(vv);
+	}
+	
+	private void verifyListField(Field[] declaredFields) {
+		var vv = Stream.of(declaredFields)
+		.filter(f -> f.getType().equals(List.class)).count() > 0;
 		assertTrue(vv);
 	}
 

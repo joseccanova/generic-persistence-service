@@ -5,12 +5,15 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
 import org.nanotek.ormservice.api.meta.ColumnTypeAnnotation;
+import org.nanotek.ormservice.api.meta.ManyToOneTypeAnnotation;
 import org.nanotek.ormservice.api.meta.MetaDataAttribute;
 
+import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.description.type.TypeDefinition;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
@@ -53,11 +56,11 @@ public class MetaClassAttributeBuilder {
 		return TypeDescription.Generic.Builder.parameterizedType(List.class, att.getClazz()).build(); 
 	}
 
-	private Annotation verifyAnnotationType(MetaDataAttribute att) {
+	private AnnotationDescription verifyAnnotationType(MetaDataAttribute att) {
 		return Optional.of(att).map(a -> processAttributeType(a)).get();
 	}
 
-	private Annotation processAttributeType(MetaDataAttribute a) {
+	private AnnotationDescription processAttributeType(MetaDataAttribute a) {
 		 switch (a.getAttributeType()) {
 		case Single:
 			return columnType(a);
@@ -70,20 +73,17 @@ public class MetaClassAttributeBuilder {
 		}
 	}
 
-	private Annotation mapType(MetaDataAttribute a) {
+	private AnnotationDescription mapType(MetaDataAttribute a) {
 		return null;
 	}
 
 	//TODO: refine this ... will be moved for a second processing on class.
-	private Annotation listType(MetaDataAttribute a) {
-		return new ManyToOneType();
+	private AnnotationDescription listType(MetaDataAttribute a) {
+		return AnnotationDescription.Builder.ofType(ManyToOne.class).build();
 	}
 
-	private Annotation columnType(MetaDataAttribute a) {
-		var ct = new ColumnTypeAnnotation();
-		ct.setName(a.getColumnName());
-		ct.setNullable(!a.isRequired());
-		return ct;
+	private AnnotationDescription columnType(MetaDataAttribute a) {
+		return AnnotationDescription.Builder.ofType(Column.class).define("name", a.getColumnName()).build();
 	}
 	
 }
