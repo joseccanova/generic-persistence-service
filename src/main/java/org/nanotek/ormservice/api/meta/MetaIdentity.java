@@ -19,6 +19,7 @@ public class MetaIdentity {
 	private String shortName;
 	private String name;
 	private List<MetaDataAttribute> attributes; 
+	private IdentityType type;
 	
 	public static enum IdentityType {
 		Identity,
