@@ -6,6 +6,7 @@ import org.nanotek.ormservice.api.meta.MetaDataAttribute;
 
 import net.bytebuddy.dynamic.DynamicType.Builder;
 
+//TODO: Externalize on a Functional interface and create a class for delegation.
 public class MetaClassAttributeBuilder {
 
 	public MetaClassAttributeBuilder() {

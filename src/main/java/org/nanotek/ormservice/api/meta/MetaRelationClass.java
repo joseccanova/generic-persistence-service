@@ -18,6 +18,8 @@ import schemacrawler.schema.Table;
 import schemacrawler.schema.TableConstraintColumn;
 import schemacrawler.schema.TableConstraintType;
 
+
+//TODO: Refactor this concept.
 public class MetaRelationClass implements ForeignKey{
 	/**
 	 * 

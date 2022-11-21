@@ -1,6 +1,7 @@
 package org.nanotek.ormservice.api.meta;
 
 
+//TODO: review this concept
 public class MetaRelation {
 
 	protected MetaDataAttribute from; 
