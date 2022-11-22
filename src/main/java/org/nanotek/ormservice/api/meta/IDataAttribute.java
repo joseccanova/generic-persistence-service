@@ -35,8 +35,8 @@ public interface IDataAttribute {
 
 	Map<String, Object> getAttributes();
 
-	List<String> getAliases();
+	<T> List<T> getAliases();
 
-	void setAliases(List<String> idAliases);
+	void setAliases(List<Alias> idAliases);
 
 }

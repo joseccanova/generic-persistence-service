@@ -17,7 +17,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MetaDataAttribute implements IDataAttribute {
+public class MetaDataAttribute 
+implements IDataAttribute {
 
 	@Getter
 	@Setter
@@ -51,7 +52,7 @@ public class MetaDataAttribute implements IDataAttribute {
 
 	@Getter
 	@Setter
-	private List<String> aliases;
+	private List<Alias> aliases;
 	
 	@Getter
 	@Setter

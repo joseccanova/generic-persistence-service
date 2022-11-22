@@ -1,7 +1,7 @@
 package org.nanotek.ormservice.api.meta;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
+import java.util.stream.Stream;
 
 import org.jgrapht.graph.DefaultEdge;
 
@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Builder;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * What is about, left and right is a common vocabulary on graphs representation. 
@@ -34,7 +33,9 @@ public class MetaEdge extends DefaultEdge  {
 	public MetaEdge(Class<?> source , Class<?> target) {
 		Class<?> c = MetaEdge.class.getSuperclass().getSuperclass();
 		log.info("className{}" , c);
-		for (Field f1 : c.getDeclaredFields()) {
+		Stream.of(c.getDeclaredFields())
+		.forEach(f1 -> 
+		{
 			try {
 					if (f1.getName().equals("source")){
 						f1.setAccessible(true);
@@ -46,7 +47,7 @@ public class MetaEdge extends DefaultEdge  {
 					}
 				} catch (Exception e) {
 				}
-		}
+		});
 	}
 	
 	@Override

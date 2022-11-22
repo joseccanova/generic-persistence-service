@@ -32,10 +32,10 @@ public class MetaClass implements IClass {
 	protected List<MetaDataAttribute> metaAttributes = new ArrayList<MetaDataAttribute>();
 
 	@JsonIgnore
-	private boolean hasPrimraryKey;
+	protected List<MetaRelation> metaRelations;
 
 	@JsonIgnore
-	protected List<MetaRelationClass> metaRelationsClasses;
+	private boolean hasPrimraryKey;
 
 	protected MetaIdentity identity;
 

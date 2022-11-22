@@ -1,39 +1,26 @@
 package org.nanotek.ormservice.api.meta;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-//TODO: review this concept
+
+/**
+ * Quite more complex processing need to be mounted on a second pass of the class builder
+ * @author Jose.Canova
+ *
+ */
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+@Builder
 public class MetaRelation {
 
-	protected MetaDataAttribute from; 
+	protected MetaClass from; 
 	
-	protected MetaDataAttribute to;
-
+	protected MetaClass to;
 	
-	
-	public MetaRelation(MetaDataAttribute from, MetaDataAttribute to) {
-		super();
-		this.from = from;
-		this.to = to;
-	}
-
-	public MetaRelation() {
-		super();
-	}
-
-	public MetaDataAttribute getFrom() {
-		return from;
-	}
-
-	public void setFrom(MetaDataAttribute from) {
-		this.from = from;
-	}
-
-	public MetaDataAttribute getTo() {
-		return to;
-	}
-
-	public void setTo(MetaDataAttribute to) {
-		this.to = to;
-	}
+	protected RelationType type;
 	
 }
