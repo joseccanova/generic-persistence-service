@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.nanotek.ormservice.BaseConfiguration;
 import org.nanotek.ormservice.OrmServiceApplication;
@@ -39,6 +41,7 @@ public class MetaClassBasicTests {
 	
 	//TODO: Fix Id annotation and property test.
 	@Test
+	@Order(value = 0)
 	public void basicMetaClassCreationTest() {
 		MetaClass mt = createBasicMetaClassAndPopulateWithAttributes();
 		createIdentity(mt);
@@ -58,12 +61,21 @@ public class MetaClassBasicTests {
 			verifyLongField(cls.getDeclaredFields());
 			verifyStringField(cls.getDeclaredFields());
 			verifyListField(cls.getDeclaredFields());
+			verifyIdAnnotation(cls.getDeclaredFields());
 		} catch (Exception e) {
 			e.printStackTrace();
 			assertTrue(false);
 		}
 	}
 	
+	private void verifyIdAnnotation(Field[] declaredFields) {
+		assertTrue (Stream.of(declaredFields)
+		.anyMatch(f -> hasIdAnnotation(f)));
+	}
+
+	private boolean hasIdAnnotation(Field f) {
+		return Stream.of(f.getAnnotations()).anyMatch(a -> a.annotationType().equals(Id.class));
+	}
 	private void verifyStringField(Field[] declaredFields) {
 		var vv = Stream.of(declaredFields)
 				.filter(f -> f.getType().equals(String.class)).count() > 0;
@@ -72,7 +84,7 @@ public class MetaClassBasicTests {
 
 	private void verifyLongField(Field[] declaredFields) {
 		var vv = Stream.of(declaredFields)
-		.filter(f -> f.getType().equals(Long.class)).count() > 0;
+		.filter(f -> f.getType().equals(Long.class)).count() > 1;
 		assertTrue(vv);
 	}
 	

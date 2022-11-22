@@ -3,6 +3,11 @@ package org.nanotek.ormservice.api.meta.builder;
 import static net.bytebuddy.matcher.ElementMatchers.named;
 
 import java.lang.annotation.Annotation;
+import java.util.Optional;
+
+import javax.persistence.Entity;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Table;
 
 import org.nanotek.ormservice.Base;
 import org.nanotek.ormservice.Holder;
@@ -20,7 +25,6 @@ import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.description.type.TypeDefinition;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
-import net.bytebuddy.dynamic.DynamicType.Builder.FieldDefinition.Optional;
 import net.bytebuddy.implementation.FixedValue;
 
 //TODO: remake this class ... code is weird.
@@ -49,9 +53,9 @@ public class MetaClassClassBuilder {
 		
 //		Class<?> idClass = getIdClass(cm11);
 		//TODO:generate another strategy to produce an ID for the EntityClass.
-		Class<?> idClass = getIdClass(cm11);
+		Class<?> idClass = getIdClass(cm11).orElse(Long.class);
 		TypeDefinition td = TypeDescription.Generic.Builder.parameterizedType(Base.class  , idClass).build();
-		Builder bd = new ByteBuddy(ClassFileVersion.JAVA_V8)
+		Builder<?> bd = new ByteBuddy(ClassFileVersion.JAVA_V8)
 						.subclass(td)
 						.name(PACKAGE+myClassName)
 						.annotateType(rootAnnotation)
@@ -65,12 +69,12 @@ public class MetaClassClassBuilder {
 		  return  processAttributes(bd , cm11);
 	}
 
-	private Builder processMetaIdentity(Builder bd, MetaClass cm11) {
+	private Builder processMetaIdentity(Builder<?> bd, MetaClass cm11) {
 		return bd.defineProperty(cm11.getIdentity().getName(), MetaClassIdentityBuilder.prepare(cm11).build()).annotateField(MetaClassIdentityAnnotationBuilder.build());
 	}
 
 	@SuppressWarnings("rawtypes")
-	private Builder processAttributes(Builder bd, MetaClass cm11) {
+	private Builder<?> processAttributes(Builder<?> bd, MetaClass cm11) {
 		var holder = new Holder<Builder<?>>().put(bd);
 		cm11
 		.getMetaAttributes()
@@ -81,24 +85,29 @@ public class MetaClassClassBuilder {
 		return holder.get().orElseThrow();
 	}
 
-	private Annotation processTableType(MetaClass cm11) {
-		return new TableAnnotation(cm11.getTableName());
+	private AnnotationDescription processTableType(MetaClass cm11) {
+		return AnnotationDescription.Builder.ofType(Table.class).define("name", cm11.getTableName()).build();
 	}
 
-	private Annotation processEntityType (MetaClass cm)
+	private AnnotationDescription processEntityType (MetaClass cm)
 	{
 		switch(cm.getClassType()) {
 		case EntityClass:
-			return new EntityAnnotation(cm.getClassName());
+			return AnnotationDescription.Builder.ofType(Entity.class).define("name", cm.getClassName()).build();
 		case MappedSuperClass:
-			return new MappedSuperClassAnnotation();
+			return AnnotationDescription.Builder.ofType(MappedSuperclass.class).build();
 		default: 
 			return null;
 		}
 	}
 	
-	private Class<?> getIdClass(MetaClass cm11) {
-		return Long.class;
+	//TODO: refactor to support composite id
+	private Optional<Class<?>> getIdClass(MetaClass cm11) {
+		return Optional
+				.ofNullable(cm11.getIdentity())  
+				.map(i -> i.getAttributes())
+				.map(as -> as.get(0))
+				.map(a -> a.getClazz());
 	}
 
 }
