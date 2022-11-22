@@ -17,7 +17,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 public class MetaDataAttribute 
-implements IDataAttribute {
+ {
 
 	@Getter
 	@Setter

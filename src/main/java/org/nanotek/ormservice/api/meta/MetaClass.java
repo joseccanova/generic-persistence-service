@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 @JsonInclude(value = Include.NON_NULL)
 @Data
-public class MetaClass implements IClass {
+public class MetaClass  {
 
 	@JsonProperty("tableName")
 	protected String tableName;
