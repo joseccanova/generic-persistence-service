@@ -44,3 +44,7 @@ Found something to help as a guide for development.[CrossCore](https://github.co
 >Why not generate code? it's done [staruml](https://staruml.io/extensions).
 
 >The metamodel is not just designed for JPA but is a requirement for the project.
+
+>Refactor MetaModel to produce a package with no external dependencies. then declare the metamodel as persistent model.
+
+>Create classes to represent Entity , MetaClass <- and Table Annotations will let it easy.

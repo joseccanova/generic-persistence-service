@@ -2,7 +2,6 @@ package org.nanotek.ormservice.api.meta.builder;
 
 import static net.bytebuddy.matcher.ElementMatchers.named;
 
-import java.lang.annotation.Annotation;
 import java.util.Optional;
 
 import javax.persistence.Entity;
@@ -11,10 +10,7 @@ import javax.persistence.Table;
 
 import org.nanotek.ormservice.Base;
 import org.nanotek.ormservice.Holder;
-import org.nanotek.ormservice.api.meta.EntityAnnotation;
-import org.nanotek.ormservice.api.meta.MappedSuperClassAnnotation;
 import org.nanotek.ormservice.api.meta.MetaClass;
-import org.nanotek.ormservice.api.meta.TableAnnotation;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 
