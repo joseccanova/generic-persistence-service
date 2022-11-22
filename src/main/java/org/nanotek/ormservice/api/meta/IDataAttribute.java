@@ -1,7 +1,6 @@
 package org.nanotek.ormservice.api.meta;
 
 import java.util.List;
-import java.util.Map;
 
 public interface IDataAttribute {
 
@@ -30,10 +29,6 @@ public interface IDataAttribute {
 	void setFieldName(String name);
 
 	String getFieldName();
-
-	void setAttributes(Map<String, Object> attributes);
-
-	Map<String, Object> getAttributes();
 
 	<T> List<T> getAliases();
 

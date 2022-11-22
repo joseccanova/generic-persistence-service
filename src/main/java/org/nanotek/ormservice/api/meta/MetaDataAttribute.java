@@ -1,7 +1,6 @@
 package org.nanotek.ormservice.api.meta;
 
 import java.util.List;
-import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -27,28 +26,28 @@ implements IDataAttribute {
 	@Getter
 	@Setter
 	@JsonProperty("columnName")
+	
 	protected String columnName;
 	//TODO:Fix Length to integer
 	@Getter
 	@Setter
 	@JsonProperty("length")
 	protected String length;
+	
 	@Getter
 	@Setter
 	@JsonProperty("required")
 	protected boolean required;
+	
 	@Getter
 	@Setter
 	@JsonProperty("sqlType")
 	private String sqlType;
+	
 	@Getter
 	@Setter
 	@JsonProperty("fieldName")
 	private String fieldName;
-	@Getter
-	@Setter
-	@JsonProperty("attributes")
-	private Map<String, Object> attributes;
 
 	@Getter
 	@Setter
