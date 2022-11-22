@@ -22,7 +22,7 @@ import org.nanotek.ormservice.api.meta.MetaClassType;
 import org.nanotek.ormservice.api.meta.MetaDataAttribute;
 import org.nanotek.ormservice.api.meta.MetaDataAttribute.AttributeType;
 import org.nanotek.ormservice.api.meta.MetaIdentity;
-import org.nanotek.ormservice.api.meta.builder.MetaClassClassBuilder;
+import org.nanotek.ormservice.api.meta.builder.MetaClassDynamicTypeBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,7 +37,7 @@ public class MetaClassBasicTests {
 	DefaultListableBeanFactory beanFactory;
 	
 	@Autowired
-	MetaClassClassBuilder classBuilder;
+	MetaClassDynamicTypeBuilder classBuilder;
 	
 	//TODO: Fix Id annotation and property test.
 	@Test

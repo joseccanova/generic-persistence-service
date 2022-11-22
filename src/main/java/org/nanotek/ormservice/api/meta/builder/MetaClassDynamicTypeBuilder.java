@@ -35,15 +35,15 @@ import net.bytebuddy.implementation.FixedValue;
  *
  */
 @Slf4j
-public class MetaClassClassBuilder {
+public class MetaClassDynamicTypeBuilder {
 
 	public static final String PACKAGE  = "org.nanotek.meta.entities.";
 	
-	public MetaClassClassBuilder() {
+	public MetaClassDynamicTypeBuilder() {
 	}
 	
 	
-	public Builder build(MetaClass cm11) {
+	public Builder<?> build(MetaClass cm11) {
 //		processors.stream().forEach(p -> p.process(cm11));
 		String myClassName = cm11.getClassName();
 		log.debug("class name " + myClassName);
