@@ -74,7 +74,7 @@ public class MetaClass  {
 		return new StringBuilder().append(DEFAULT_PACKAGE).append('.').append(className).toString();
 	}
 	
-	public Optional<List<MetaRelation>> hasRelations() {
+	public Optional<?> hasRelations() {
 		return Optional.ofNullable(metaRelations).filter(r -> r.size()>0);
 	}
 }

@@ -1,9 +1,9 @@
 package org.nanotek.ormservice.api.meta.service;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.nanotek.ormservice.api.meta.MetaClass;
+import org.nanotek.ormservice.api.meta.builder.MetaClassRelationsBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
@@ -15,15 +15,18 @@ public class DynamicTypeRelationService {
 	@Autowired
 	Map<String, MetaClass> classCache;
 	
+	@Autowired
+	MetaClassRelationsBuilder relationBuilder;
+	
 	public void processRelationClasses() {
-		ClassLoader loader = beanFactory.getBeanClassLoader();
-		classCache.entrySet().forEach(e -> processRelationIfAny(e));
+		classCache.entrySet().forEach(e -> processRelationIfAny(e.getValue()));
 	}
 
-	private Object processRelationIfAny(Entry<String, MetaClass> e) {
-		// TODO Auto-generated method stub
-		return null;
+	private void processRelationIfAny(MetaClass metaClass) {
+		metaClass
+		.hasRelations()
+		.ifPresent(r -> 
+			relationBuilder.build(beanFactory.getBeanClassLoader(), metaClass));
 	}
-
 	
 }
