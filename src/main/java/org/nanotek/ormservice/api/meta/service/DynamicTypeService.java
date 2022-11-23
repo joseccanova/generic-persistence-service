@@ -1,9 +1,12 @@
 package org.nanotek.ormservice.api.meta.service;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import org.nanotek.ormservice.api.meta.MetaClass;
+import org.nanotek.ormservice.api.meta.MetaRelation;
 import org.nanotek.ormservice.api.meta.builder.MetaClassDynamicTypeBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -29,11 +32,4 @@ public class DynamicTypeService {
 		return Optional.of(loaded.getLoaded());
 	}
 
-	private void prepareRelationClasses() {
-	}
-
-	private boolean hasRelations(MetaClass metaClass) {
-		return false;
-	}
-	
 }
