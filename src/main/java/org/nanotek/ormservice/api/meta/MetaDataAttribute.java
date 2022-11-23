@@ -4,12 +4,13 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-//TODO: verify complex attributes being used as IDClasses.
 @Data
+@Builder
 public class MetaDataAttribute 
  {
 
@@ -17,12 +18,12 @@ public class MetaDataAttribute
 	@Setter
 	@JsonProperty("clazz")
 	protected Class<?> clazz;
+	
 	@Getter
 	@Setter
 	@JsonProperty("columnName")
-	
 	protected String columnName;
-	//TODO:Fix Length to integer
+	
 	@Getter
 	@Setter
 	@JsonProperty("length")

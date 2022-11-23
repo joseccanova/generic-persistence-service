@@ -96,7 +96,7 @@ public class MetaClassBasicTests {
 
 	@Test
 	public void classAndAttributesCreationTest() {
-		MetaClass mt = createBasicMetaClassAndPopulateWithAttributes();
+		createBasicMetaClassAndPopulateWithAttributes();
 	}
 
 	private void createIdentity(MetaClass mc) {
