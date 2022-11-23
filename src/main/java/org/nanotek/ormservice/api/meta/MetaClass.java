@@ -16,6 +16,8 @@ import lombok.Setter;
 @Data
 public class MetaClass  {
 
+	public static final String DEFAULT_PACKAGE = "org.nanotek.entity";
+	
 	@Getter
 	@Setter
 	@JsonProperty("tableName")
@@ -67,4 +69,7 @@ public class MetaClass  {
 		this.hasPrimraryKey=hasPrimeraryKey;
 	}
 	
+	public String defaultFullClassName() {
+		return new StringBuilder().append(DEFAULT_PACKAGE).append('.').append(className).toString();
+	}
 }

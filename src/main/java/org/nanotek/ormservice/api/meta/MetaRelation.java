@@ -17,20 +17,10 @@ public class MetaRelation {
 
 	@Getter
 	@Setter
-	protected MetaClass from; 
-	
-
-	@Getter
-	@Setter
 	protected MetaClass to;
 	
-
 	@Getter
 	@Setter
 	protected RelationType type;
 
-	@Getter
-	@Setter
-	protected CardinalityType cardinality;
-	
 }

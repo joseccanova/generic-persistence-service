@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import net.bytebuddy.dynamic.DynamicType.Builder;
+import net.bytebuddy.dynamic.DynamicType.Loaded;
 
 public class DynamicTypeService {
 
@@ -19,16 +20,16 @@ public class DynamicTypeService {
 	MetaClassDynamicTypeBuilder classBuilder;
 	
 	@Autowired
-	Map<Class<?>, MetaClass> classCache;
+	Map<String, MetaClass> classCache;
 	
 	public Optional<?> build(MetaClass metaClass){
-		if(hasRelations(metaClass))
-			prepareRelationClasses(metaClass);
 		Builder<?> builder = classBuilder.build(metaClass);
-		return Optional.empty();
+		Loaded<?> loaded = builder.make().load(beanFactory.getBeanClassLoader());
+		classCache.put(metaClass.defaultFullClassName(), metaClass);
+		return Optional.of(loaded.getLoaded());
 	}
 
-	private void prepareRelationClasses(MetaClass metaClass) {
+	private void prepareRelationClasses() {
 	}
 
 	private boolean hasRelations(MetaClass metaClass) {
