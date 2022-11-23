@@ -7,38 +7,40 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.nanotek.ormservice.IBase;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Getter;
+import lombok.Setter;
 
 @SuppressWarnings("serial")
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode
-@ToString
 @Valid
-public class MetaIdentity implements IBase<Long>{
+public class MetaIdentity {
 
+	@Getter
+	@Setter
 	private String definition;
 
+	@Getter
+	@Setter
 	private String shortName;
 	
+	@Getter
+	@Setter
 	@NotEmpty
 	private String name;
 	
+	@Getter
+	@Setter
 	@Size(min = 1)
 	private List<MetaDataAttribute> attributes; 
 	
+	@Getter
+	@Setter
 	@NotNull
 	private IdentityType type;
 
+	@Getter
+	@Setter
 	private Long id;
 	
 	public static enum IdentityType {

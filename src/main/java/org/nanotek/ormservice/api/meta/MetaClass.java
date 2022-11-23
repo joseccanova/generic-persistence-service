@@ -8,53 +8,61 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode
 @JsonInclude(value = Include.NON_NULL)
 @Data
 public class MetaClass  {
 
+	@Getter
+	@Setter
 	@JsonProperty("tableName")
 	protected String tableName;
 	
-	@JsonProperty("className")
+
+	@Getter
+	@Setter	@JsonProperty("className")
 	protected String className; 
 	
+
+	@Getter
+	@Setter
 	@JsonProperty("classType")
 	protected MetaClassType classType;
 	
 	protected List<MetaDataAttribute> metaAttributes = new ArrayList<MetaDataAttribute>();
 
+
+	@Getter
+	@Setter
 	@JsonIgnore
 	protected List<MetaRelation> metaRelations;
 
+
+	@Getter
+	@Setter
 	@JsonIgnore
 	private boolean hasPrimraryKey;
 
+
+	@Getter
+	@Setter
 	protected MetaIdentity identity;
 
-	@Override
 	public boolean addMetaAttribute(MetaDataAttribute attr) {
 		return metaAttributes.add(attr);
 	}
 
-	@Override
 	public void hasPrimaryKey(boolean b) {
 		this.hasPrimraryKey=b;
 	}
 
-	@Override
 	public boolean isHasPrimeraryKey() {
 		return hasPrimraryKey;
 	}
 
-	@Override
 	public void setHasPrimeraryKey(boolean hasPrimeraryKey) {
 		this.hasPrimraryKey=hasPrimeraryKey;
 	}
