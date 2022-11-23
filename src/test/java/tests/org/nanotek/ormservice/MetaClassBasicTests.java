@@ -39,7 +39,6 @@ public class MetaClassBasicTests {
 	@Autowired
 	MetaClassDynamicTypeBuilder classBuilder;
 	
-	//TODO: Fix Id annotation and property test.
 	@Test
 	@Order(value = 0)
 	public void basicMetaClassCreationTest() {
@@ -57,7 +56,7 @@ public class MetaClassBasicTests {
 			assertNotNull(bean);
 			Object obj = cls.newInstance();
 			assertNotNull(obj);
-			assertTrue( obj.getClass().getDeclaredFields().length>1);
+			assertTrue(obj.getClass().getDeclaredFields().length>1);
 			verifyLongField(cls.getDeclaredFields());
 			verifyStringField(cls.getDeclaredFields());
 			verifyListField(cls.getDeclaredFields());

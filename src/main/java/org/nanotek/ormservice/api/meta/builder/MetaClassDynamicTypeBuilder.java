@@ -47,8 +47,6 @@ public class MetaClassDynamicTypeBuilder {
 				.define("value", myClassName)
 				.build();
 		
-//		Class<?> idClass = getIdClass(cm11);
-		//TODO:generate another strategy to produce an ID for the EntityClass.
 		Class<?> idClass = getIdClass(cm11).orElse(Long.class);
 		TypeDefinition td = TypeDescription.Generic.Builder.parameterizedType(Base.class  , idClass).build();
 		Builder<?> bd = new ByteBuddy(ClassFileVersion.JAVA_V8)
@@ -65,11 +63,10 @@ public class MetaClassDynamicTypeBuilder {
 		  return  processAttributes(bd , cm11);
 	}
 
-	private Builder processMetaIdentity(Builder<?> bd, MetaClass cm11) {
+	private Builder<?> processMetaIdentity(Builder<?> bd, MetaClass cm11) {
 		return bd.defineProperty(cm11.getIdentity().getName(), MetaClassIdentityBuilder.prepare(cm11).build()).annotateField(MetaClassIdentityAnnotationBuilder.build());
 	}
 
-	@SuppressWarnings("rawtypes")
 	private Builder<?> processAttributes(Builder<?> bd, MetaClass cm11) {
 		var holder = new Holder<Builder<?>>().put(bd);
 		cm11
@@ -87,9 +84,12 @@ public class MetaClassDynamicTypeBuilder {
 
 	private AnnotationDescription processEntityType (MetaClass cm)
 	{
+		if (cm.getMetaRelations() != null && cm.getMetaRelations().size() > 0)
+			return AnnotationDescription.Builder.ofType(MappedSuperclass.class).build();
+
 		switch(cm.getClassType()) {
 		case EntityClass:
-			return AnnotationDescription.Builder.ofType(Entity.class).define("name", cm.getClassName()).build();
+			AnnotationDescription.Builder.ofType(Entity.class).define("name", cm.getClassName()).build();
 		case MappedSuperClass:
 			return AnnotationDescription.Builder.ofType(MappedSuperclass.class).build();
 		default: 
