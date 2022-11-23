@@ -1,9 +1,9 @@
 package org.nanotek.ormservice.api.meta;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 
 /**
@@ -11,16 +11,26 @@ import lombok.NoArgsConstructor;
  * @author Jose.Canova
  *
  */
-@NoArgsConstructor
-@AllArgsConstructor
 @Data
 @Builder
 public class MetaRelation {
 
+	@Getter
+	@Setter
 	protected MetaClass from; 
 	
+
+	@Getter
+	@Setter
 	protected MetaClass to;
 	
+
+	@Getter
+	@Setter
 	protected RelationType type;
+
+	@Getter
+	@Setter
+	protected CardinalityType cardinality;
 	
 }

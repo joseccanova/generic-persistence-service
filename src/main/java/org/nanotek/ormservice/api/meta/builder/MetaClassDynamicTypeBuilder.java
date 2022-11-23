@@ -2,9 +2,12 @@ package org.nanotek.ormservice.api.meta.builder;
 
 import static net.bytebuddy.matcher.ElementMatchers.named;
 
+import java.lang.annotation.Annotation;
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
@@ -23,7 +26,6 @@ import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.implementation.FixedValue;
 
-//TODO: remake this class ... code is weird.
 /**
  * Process the creation of the ByteBuddy Builder that will generate the class definition.
  * 
@@ -40,7 +42,6 @@ public class MetaClassDynamicTypeBuilder {
 	
 	
 	public Builder<?> build(MetaClass cm11) {
-//		processors.stream().forEach(p -> p.process(cm11));
 		String myClassName = cm11.getClassName();
 		log.debug("class name " + myClassName);
 		AnnotationDescription rootAnnotation =  AnnotationDescription.Builder.ofType(JsonRootName.class)
@@ -53,8 +54,7 @@ public class MetaClassDynamicTypeBuilder {
 						.subclass(td)
 						.name(PACKAGE+myClassName)
 						.annotateType(rootAnnotation)
-						.annotateType(processEntityType(cm11))
-						.annotateType(processTableType(cm11))
+						.annotateType(getJpaAnnotations(cm11))
 						.withHashCodeEquals()
 						.withToString()
 						.method(named("getMetaClass"))
@@ -62,6 +62,20 @@ public class MetaClassDynamicTypeBuilder {
 		  bd = processMetaIdentity(bd , cm11);
 		  return  processAttributes(bd , cm11);
 	}
+
+
+	private AnnotationDescription[] getJpaAnnotations(MetaClass cm11){
+		var list = List.<AnnotationDescription>of();
+		list.add(processEntityType(cm11));
+		list.add(processTableType(cm11));
+		list.add(processInheritance(cm11));
+		return list.toArray(new AnnotationDescription[list.size()]);
+	}
+	
+	private AnnotationDescription processInheritance(MetaClass metaClass) {
+		return AnnotationDescription.Builder.ofType(Inheritance.class).build();
+	}
+
 
 	private Builder<?> processMetaIdentity(Builder<?> bd, MetaClass cm11) {
 		return bd.defineProperty(cm11.getIdentity().getName(), MetaClassIdentityBuilder.prepare(cm11).build()).annotateField(MetaClassIdentityAnnotationBuilder.build());

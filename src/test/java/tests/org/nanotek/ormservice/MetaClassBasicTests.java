@@ -75,22 +75,20 @@ public class MetaClassBasicTests {
 	private boolean hasIdAnnotation(Field f) {
 		return Stream.of(f.getAnnotations()).anyMatch(a -> a.annotationType().equals(Id.class));
 	}
+	
 	private void verifyStringField(Field[] declaredFields) {
-		var vv = Stream.of(declaredFields)
-				.filter(f -> f.getType().equals(String.class)).count() > 0;
-				assertTrue(vv);		
+		assertTrue(Stream.of(declaredFields)
+				.filter(f -> f.getType().equals(String.class)).count() > 0);		
 	}
 
 	private void verifyLongField(Field[] declaredFields) {
-		var vv = Stream.of(declaredFields)
-		.filter(f -> f.getType().equals(Long.class)).count() > 1;
-		assertTrue(vv);
+		assertTrue(Stream.of(declaredFields)
+		.filter(f -> f.getType().equals(Long.class)).count() > 1);
 	}
 	
 	private void verifyListField(Field[] declaredFields) {
-		var vv = Stream.of(declaredFields)
-		.filter(f -> f.getType().equals(List.class)).count() > 0;
-		assertTrue(vv);
+		assertTrue(Stream.of(declaredFields)
+		.filter(f -> f.getType().equals(List.class)).count() > 0);
 	}
 
 	@Test
