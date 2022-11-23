@@ -89,7 +89,6 @@ public class MetaClassRelationsBuilder {
 				return null;
 			}
 		}
-
 	}
 	
 }

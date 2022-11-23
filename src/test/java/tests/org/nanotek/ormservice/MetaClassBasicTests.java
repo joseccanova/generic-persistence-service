@@ -7,6 +7,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import javax.persistence.Entity;
@@ -23,7 +24,10 @@ import org.nanotek.ormservice.api.meta.MetaDataAttribute;
 import org.nanotek.ormservice.api.meta.MetaDataAttribute.AttributeType;
 import org.nanotek.ormservice.api.meta.MetaIdentity;
 import org.nanotek.ormservice.api.meta.builder.MetaClassDynamicTypeBuilder;
+import org.nanotek.ormservice.api.meta.service.DynamicTypeService;
+import org.nanotek.ormservice.api.meta.service.TypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -36,8 +40,10 @@ public class MetaClassBasicTests {
 	@Autowired
 	DefaultListableBeanFactory beanFactory;
 	
+	
 	@Autowired
-	MetaClassDynamicTypeBuilder classBuilder;
+	@TypeService
+	DynamicTypeService typeService;
 	
 	@Test
 	@Order(value = 0)
@@ -46,8 +52,7 @@ public class MetaClassBasicTests {
 		createIdentity(mt);
 		assertNotNull(beanFactory);
 		assertNotNull(mt);
-		Builder<?> bd = classBuilder.build(mt);
-		Class<?> cls = bd.make().load(beanFactory.getBeanClassLoader()).getLoaded();
+		Class<?> cls = typeService.build(mt).map(l ->l.getLoaded()).orElseThrow();
 		assertNotNull(cls);
 		assertEntityAnnotation(cls);
 		assertTableAnnotation(cls);
@@ -61,12 +66,21 @@ public class MetaClassBasicTests {
 			verifyStringField(cls.getDeclaredFields());
 			verifyListField(cls.getDeclaredFields());
 			verifyIdAnnotation(cls.getDeclaredFields());
+			verifyClassCacheMetaClass();
 		} catch (Exception e) {
 			e.printStackTrace();
 			assertTrue(false);
 		}
 	}
+
+	@Autowired
+	@Qualifier("classCache")
+	Map<String,MetaClass> classCache;
 	
+	private void verifyClassCacheMetaClass() {
+		assertTrue (classCache.entrySet().size() >0);
+	}
+
 	private void verifyIdAnnotation(Field[] declaredFields) {
 		assertTrue (Stream.of(declaredFields)
 		.anyMatch(f -> hasIdAnnotation(f)));

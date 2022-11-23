@@ -3,6 +3,7 @@ package org.nanotek.ormservice.api.meta.builder;
 import static net.bytebuddy.matcher.ElementMatchers.named;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,8 +36,6 @@ import net.bytebuddy.implementation.FixedValue;
 @Slf4j
 public class MetaClassDynamicTypeBuilder {
 
-	public static final String PACKAGE  = "org.nanotek.meta.entities.";
-	
 	public MetaClassDynamicTypeBuilder() {
 	}
 	
@@ -52,9 +51,9 @@ public class MetaClassDynamicTypeBuilder {
 		TypeDefinition td = TypeDescription.Generic.Builder.parameterizedType(Base.class  , idClass).build();
 		Builder<?> bd = new ByteBuddy(ClassFileVersion.JAVA_V8)
 						.subclass(td)
-						.name(PACKAGE+myClassName)
+						.name(cm11.defaultFullClassName())
 						.annotateType(rootAnnotation)
-						.annotateType(getJpaAnnotations(cm11))
+						.annotateType(getAnnotations(cm11))
 						.withHashCodeEquals()
 						.withToString()
 						.method(named("getMetaClass"))
@@ -64,18 +63,13 @@ public class MetaClassDynamicTypeBuilder {
 	}
 
 
-	private AnnotationDescription[] getJpaAnnotations(MetaClass cm11){
-		var list = List.<AnnotationDescription>of();
-		list.add(processEntityType(cm11));
-		list.add(processTableType(cm11));
-		list.add(processInheritance(cm11));
-		return list.toArray(new AnnotationDescription[list.size()]);
+	private List<AnnotationDescription> getAnnotations(MetaClass cm11){
+		return List.<AnnotationDescription>of(processEntityType(cm11) , processTableType(cm11),processInheritance(cm11));
 	}
 	
 	private AnnotationDescription processInheritance(MetaClass metaClass) {
 		return AnnotationDescription.Builder.ofType(Inheritance.class).build();
 	}
-
 
 	private Builder<?> processMetaIdentity(Builder<?> bd, MetaClass cm11) {
 		return bd.defineProperty(cm11.getIdentity().getName(), MetaClassIdentityBuilder.prepare(cm11).build()).annotateField(MetaClassIdentityAnnotationBuilder.build());
@@ -98,12 +92,9 @@ public class MetaClassDynamicTypeBuilder {
 
 	private AnnotationDescription processEntityType (MetaClass cm)
 	{
-		if (cm.getMetaRelations() != null && cm.getMetaRelations().size() > 0)
-			return AnnotationDescription.Builder.ofType(MappedSuperclass.class).build();
-
 		switch(cm.getClassType()) {
 		case EntityClass:
-			AnnotationDescription.Builder.ofType(Entity.class).define("name", cm.getClassName()).build();
+			return  AnnotationDescription.Builder.ofType(Entity.class).define("name", cm.getClassName()).build();
 		case MappedSuperClass:
 			return AnnotationDescription.Builder.ofType(MappedSuperclass.class).build();
 		default: 

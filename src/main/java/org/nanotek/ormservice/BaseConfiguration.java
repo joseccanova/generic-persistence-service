@@ -9,7 +9,10 @@ import javax.sql.DataSource;
 
 import org.hibernate.cfg.Environment;
 import org.hibernate.jpa.HibernatePersistenceProvider;
+import org.nanotek.ormservice.api.meta.MetaClass;
 import org.nanotek.ormservice.api.meta.builder.MetaClassDynamicTypeBuilder;
+import org.nanotek.ormservice.api.meta.service.DynamicTypeService;
+import org.nanotek.ormservice.api.meta.service.TypeService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -71,7 +74,13 @@ public class BaseConfiguration implements ApplicationContextAware{
 		pum.setPackagesToScan("org.nanotek.ormservice.api.base");
 		return pum;
 	}
-	
+
+	@Bean
+	@Qualifier(value="classCache")
+	public Map<String, MetaClass> metaClassCache (){
+		return new HashMap<>();
+	}
+
 	
 	@Bean(name = "entityManagerFactory")
 	@Qualifier(value="entityManagerFactory")
@@ -139,5 +148,11 @@ public class BaseConfiguration implements ApplicationContextAware{
 		return new MetaClassDynamicTypeBuilder();
 	}
 
+	@Bean
+	@TypeService
+	public DynamicTypeService getDynamicTypeService() {
+		return new DynamicTypeService();
+	}
+	
 }
 
