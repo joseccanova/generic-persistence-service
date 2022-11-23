@@ -1,15 +1,11 @@
 package org.nanotek.ormservice.api.meta.builder;
 
-import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import org.hibernate.mapping.MetaAttribute;
-import org.nanotek.ormservice.Base;
 import org.nanotek.ormservice.Holder;
 import org.nanotek.ormservice.api.meta.MetaClass;
 import org.nanotek.ormservice.api.meta.MetaDataAttribute;
@@ -53,7 +49,7 @@ public class MetaClassRelationsBuilder {
 					});
 					ob.ifPresent(b -> holder.put(b));
 				});
-				return null;
+				return holder.get().orElseThrow();
 	}
 
 	private AnnotationDescription defineAnnotationType(MetaRelation rel, ClassLoader cl) {
@@ -80,7 +76,6 @@ public class MetaClassRelationsBuilder {
 		return className.substring(0,1).toLowerCase().concat(className.substring(1));
 	}
 	
-	//TODO: to be continued..
 	static class MetaRelationPropertyBuilder {
 		public static TypeDescription build(MetaClass metaClass , MetaRelation relation , RelationType relationType) {
 			//TODO: Populate properties relation type.
@@ -95,9 +90,6 @@ public class MetaClassRelationsBuilder {
 			}
 		}
 
-	}
-	
-	static class MetaRelationAnnotationBuilder {
 	}
 	
 }
