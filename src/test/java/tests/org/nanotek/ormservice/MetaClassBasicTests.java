@@ -17,36 +17,44 @@ import javax.persistence.Table;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.nanotek.ormservice.BaseConfiguration;
+import org.nanotek.ormservice.BeanFactory;
 import org.nanotek.ormservice.OrmServiceApplication;
 import org.nanotek.ormservice.api.meta.MetaClass;
 import org.nanotek.ormservice.api.meta.MetaClassType;
 import org.nanotek.ormservice.api.meta.MetaDataAttribute;
 import org.nanotek.ormservice.api.meta.MetaDataAttribute.AttributeType;
 import org.nanotek.ormservice.api.meta.MetaIdentity;
-import org.nanotek.ormservice.api.meta.builder.MetaClassDynamicTypeBuilder;
+import org.nanotek.ormservice.api.meta.MetaRelation;
+import org.nanotek.ormservice.api.meta.RelationType;
+import org.nanotek.ormservice.api.meta.service.DynamicTypeRelationService;
 import org.nanotek.ormservice.api.meta.service.DynamicTypeService;
+import org.nanotek.ormservice.api.meta.service.RelationTypeService;
 import org.nanotek.ormservice.api.meta.service.TypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import net.bytebuddy.dynamic.DynamicType.Builder;
+import net.bytebuddy.dynamic.loading.InjectionClassLoader;
 
 @SpringBootTest(classes = {BaseConfiguration.class , OrmServiceApplication.class})
 public class MetaClassBasicTests {
 
+	@Autowired
+	InjectionClassLoader classLoader;
 	
 	@Autowired
+	@BeanFactory
 	DefaultListableBeanFactory beanFactory;
-	
 	
 	@Autowired
 	@TypeService
 	DynamicTypeService typeService;
 	
-	@Test
-	@Order(value = 0)
+	@Autowired
+	@RelationTypeService
+	DynamicTypeRelationService dynamicTypeRelationService;
+	
 	public void basicMetaClassCreationTest() {
 		MetaClass mt = createBasicMetaClassAndPopulateWithAttributes();
 		createIdentity(mt);
@@ -71,6 +79,42 @@ public class MetaClassBasicTests {
 			e.printStackTrace();
 			assertTrue(false);
 		}
+	}
+
+	@Test
+	@Order(value = 1)
+	public void basicMetaClassRelationTest() {
+		MetaClass mt1 = createBasicMetaClassAndPopulateWithAttributes();
+		createIdentity(mt1);
+		MetaClass mt2 = createBasicMetaClassAndPopulateWithAttributes();
+		MetaClass mt3 = createBasicMetaClassAndPopulateWithAttributes();
+		createIdentity(mt2);
+		changeName(mt2 , "Test2");
+		changeName(mt3 , "Test3");
+		createRelation(mt1 , mt2);
+		assertTrue(mt1.getMetaRelations().size()==1);
+		typeService.build(mt1);
+		typeService.build(mt2);
+		typeService.build(mt3);
+		dynamicTypeRelationService.processRelationClasses();
+		var className = mt1.defaultFullClassName();
+		var clsRelationName = mt1.defaultFullClassName()+"Relation";
+		try {
+			classLoader.loadClass(clsRelationName);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			assertTrue(false);
+		}
+	}
+	
+	private void createRelation(MetaClass mt1, MetaClass mt2) {
+		MetaRelation mr = MetaRelation.builder().to(mt2).type(RelationType.ONE).build();
+		mt1.setMetaRelations(List.<MetaRelation>of(mr));
+	}
+
+	private void changeName(MetaClass mt2, String string) {
+		mt2.setClassName(string);
+		mt2.setTableName(string);
 	}
 
 	@Autowired

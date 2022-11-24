@@ -39,7 +39,7 @@ public class MetaAttributeTypeDescriptionBuilder {
 
 	static class SingleTypeDefinitionBuilder{
 		public static TypeDefinition build(MetaDataAttribute att) {
-			return TypeDescription.Generic.Builder.rawType(att.getClazz()).build(); 
+			return TypeDescription.Generic.Builder.of(att.getClazz()).build();
 		}
 	}
 	

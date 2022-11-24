@@ -9,6 +9,7 @@ import javax.persistence.OneToOne;
 import org.nanotek.ormservice.Holder;
 import org.nanotek.ormservice.api.meta.MetaClass;
 import org.nanotek.ormservice.api.meta.MetaDataAttribute;
+import org.nanotek.ormservice.api.meta.MetaDataAttribute.AttributeType;
 import org.nanotek.ormservice.api.meta.MetaRelation;
 import org.nanotek.ormservice.api.meta.RelationType;
 import org.nanotek.ormservice.api.meta.builder.MetaAttributeTypeDescriptionBuilder.ListTypeDefinitionBuilder;
@@ -44,8 +45,8 @@ public class MetaClassRelationsBuilder {
 					Class<?> clsR  = loadClass(cl , rel.getTo());
 					Optional<Builder<?>> ob = holder.get().map(b -> {
 						return b
-								.defineProperty(lower(clsR.getSimpleName()), MetaRelationPropertyBuilder.build(metaClass, rel, rel.getType()))
-								.annotateType(defineAnnotationType(rel,cl));
+								.defineProperty(clsR.getSimpleName(), MetaRelationPropertyBuilder.build(rel.getType(), clsR))
+								.annotateField(defineAnnotationType(rel,cl));
 					});
 					ob.ifPresent(b -> holder.put(b));
 				});
@@ -76,15 +77,19 @@ public class MetaClassRelationsBuilder {
 		return className.substring(0,1).toLowerCase().concat(className.substring(1));
 	}
 	
-	static class MetaRelationPropertyBuilder {
-		public static TypeDescription build(MetaClass metaClass , MetaRelation relation , RelationType relationType) {
+	class MetaRelationPropertyBuilder {
+		public static TypeDefinition build(RelationType relationType , Class<?> clsR) {
 			//TODO: Populate properties relation type.
-			MetaDataAttribute metaAttribute = MetaDataAttribute.builder().build();
-			switch(relation.getType()) {
+			MetaDataAttribute metaAttribute = MetaDataAttribute
+										.builder()
+										.fieldName(clsR.getSimpleName())
+										.clazz(clsR)
+										.attributeType(AttributeType.Single).build();
+			switch(relationType) {
 				case ONE: 
-					SingleTypeDefinitionBuilder.build(metaAttribute);
+					return TypeDescription.Generic.Builder.rawType(clsR).build();
 				case  MANY:
-					ListTypeDefinitionBuilder.build(metaAttribute);
+					return  ListTypeDefinitionBuilder.build(metaAttribute);
 			default:
 				return null;
 			}

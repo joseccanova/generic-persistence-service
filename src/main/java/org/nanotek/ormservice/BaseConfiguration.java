@@ -11,7 +11,10 @@ import org.hibernate.cfg.Environment;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.nanotek.ormservice.api.meta.MetaClass;
 import org.nanotek.ormservice.api.meta.builder.MetaClassDynamicTypeBuilder;
+import org.nanotek.ormservice.api.meta.builder.MetaClassRelationsBuilder;
+import org.nanotek.ormservice.api.meta.service.DynamicTypeRelationService;
 import org.nanotek.ormservice.api.meta.service.DynamicTypeService;
+import org.nanotek.ormservice.api.meta.service.RelationTypeService;
 import org.nanotek.ormservice.api.meta.service.TypeService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,14 +124,13 @@ public class BaseConfiguration implements ApplicationContextAware{
 	@Bean
 	@Primary
 	InjectionClassLoader injectionClassLoader() {
-		InjectionClassLoader ic = new  MultipleParentClassLoader(Thread.currentThread().getContextClassLoader() 
+		return new  MultipleParentClassLoader(Thread.currentThread().getContextClassLoader() 
 				, Arrays.asList(getClass().getClassLoader() , CrudMethodMetadata.class.getClassLoader())  , 
 				false);
-		return ic;
 	}
 	
 	@Bean 
-	@Qualifier(value="myBf")
+	@BeanFactory
 	public DefaultListableBeanFactory defaultListableBeanFactory(@Autowired InjectionClassLoader classLoader )
 	{
 		DefaultListableBeanFactory v = new DefaultListableBeanFactory();
@@ -154,5 +156,15 @@ public class BaseConfiguration implements ApplicationContextAware{
 		return new DynamicTypeService();
 	}
 	
+	@Bean
+	public MetaClassRelationsBuilder getMetaClassRelationsBuilder() {
+		return new MetaClassRelationsBuilder();
+	}
+	
+	@Bean
+	@RelationTypeService
+	public DynamicTypeRelationService getDynamicTypeRelationService() {
+		return new DynamicTypeRelationService();
+	}
 }
 
