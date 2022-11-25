@@ -11,12 +11,12 @@ import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 import javax.validation.groups.Default;
 
-import org.nanotek.ormservice.Provider;
 import org.nanotek.ormservice.api.meta.MetaClass;
 import org.nanotek.ormservice.api.meta.MetaDataAttribute;
 import org.nanotek.ormservice.api.meta.MetaRelation;
 import org.nanotek.ormservice.api.meta.RelationType;
 
+import lombok.Getter;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.ClassFileVersion;
 import net.bytebuddy.description.type.TypeDefinition;
@@ -36,6 +36,7 @@ public class MetaModel <T extends MetaClass> {
 	@NotNull
 	private T clazz;
 	
+	@Getter
 	private Map<String , Loaded<?>> attributeRegistry;
 	
 	private Map<String , Loaded<?>> relationRegistry;
@@ -53,17 +54,15 @@ public class MetaModel <T extends MetaClass> {
 		return new MetaModel<>(clazz , classLoader);
 	}
 	
-	public MetaModel<?> defineAttribute(Provider<MetaDataAttribute> provider) {
+	public MetaModel<?> defineAttribute(Optional<MetaDataAttribute> provider) {
 		provider
-			.get()
 			.ifPresentOrElse(a->registryAttributeInterface(a) , RuntimeException::new);
 		return this;
 	}
 	
 	private void registryAttributeInterface(MetaDataAttribute att) {
 		validateAttribute(att)
-		.map(a -> Map.<String,Loaded<?>> entry(a.getFieldName() , createAccessorMutatorInterface(a)))
-		.ifPresent(e -> attributeRegistry.entrySet().add(e));
+		.ifPresent(e -> attributeRegistry.put(e.getFieldName() , createAccessorMutatorInterface(e)));
 		clazz.addMetaAttribute(att);
 	}
 
@@ -99,14 +98,9 @@ public class MetaModel <T extends MetaClass> {
 		return this;
 	}
 	
+	
 	public Set<?> validate(Validator validator){
 		return validator.validate(clazz, Default.class);
 	}
 	
-	public static void main(String[] arg) {
-		MetaClass mc = new MetaClass();
-		MetaModel
-		.intialize(mc, mc.getClass().getClassLoader())
-		.defineAttribute(()-> Optional.of(MetaDataAttribute.builder().build()));
-	}
 }

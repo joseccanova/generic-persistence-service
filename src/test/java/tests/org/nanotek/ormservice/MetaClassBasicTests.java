@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import javax.persistence.Entity;
@@ -26,6 +27,7 @@ import org.nanotek.ormservice.api.meta.MetaDataAttribute.AttributeType;
 import org.nanotek.ormservice.api.meta.MetaIdentity;
 import org.nanotek.ormservice.api.meta.MetaRelation;
 import org.nanotek.ormservice.api.meta.RelationType;
+import org.nanotek.ormservice.api.meta.model.MetaModel;
 import org.nanotek.ormservice.api.meta.service.DynamicTypeRelationService;
 import org.nanotek.ormservice.api.meta.service.DynamicTypeService;
 import org.nanotek.ormservice.api.meta.service.RelationTypeService;
@@ -112,6 +114,16 @@ public class MetaClassBasicTests {
 			e.printStackTrace();
 			assertTrue(false);
 		}
+	}
+	
+	@Test
+	@Order(2)
+	public void testMetaModel() {
+		MetaModel<?> mm = MetaModel
+		.intialize(createBasicMetaClass(), classLoader)
+		.defineAttribute(Optional.of(createLongMetaAttribute()));
+		assertTrue(mm.getAttributeRegistry().size()>0);
+		
 	}
 
 	private void createManyRelation(MetaClass mt1, MetaClass mt2 , MetaClass mt3) {
