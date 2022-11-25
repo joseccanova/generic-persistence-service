@@ -3,7 +3,6 @@ package org.nanotek.ormservice.api.meta;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import javax.validation.Valid;
@@ -58,7 +57,7 @@ public class MetaClass  {
 	@Getter
 	@Setter
 	@JsonIgnore
-	private boolean hasPrimraryKey;
+	private boolean hasPrimaryKey;
 
 
 	@Getter
@@ -77,15 +76,15 @@ public class MetaClass  {
 	}
 
 	public void hasPrimaryKey(boolean b) {
-		this.hasPrimraryKey=b;
+		this.hasPrimaryKey=b;
 	}
 
-	public boolean isHasPrimeraryKey() {
-		return hasPrimraryKey;
+	public boolean isHasPrimaryKey() {
+		return hasPrimaryKey;
 	}
 
 	public void setHasPrimeraryKey(boolean hasPrimeraryKey) {
-		this.hasPrimraryKey=hasPrimeraryKey;
+		this.hasPrimaryKey=hasPrimeraryKey;
 	}
 	
 	public String defaultFullClassName() {
