@@ -1,6 +1,9 @@
 package org.nanotek.ormservice.api.meta.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -8,11 +11,18 @@ import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 import javax.validation.groups.Default;
 
+import org.nanotek.ormservice.Provider;
 import org.nanotek.ormservice.api.meta.MetaClass;
 import org.nanotek.ormservice.api.meta.MetaDataAttribute;
 import org.nanotek.ormservice.api.meta.MetaRelation;
 import org.nanotek.ormservice.api.meta.RelationType;
 
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.ClassFileVersion;
+import net.bytebuddy.description.type.TypeDefinition;
+import net.bytebuddy.description.type.TypeDescription;
+import net.bytebuddy.dynamic.DynamicType.Loaded;
+import net.bytebuddy.jar.asm.Opcodes;
 /**
  * This class could be used to validate the MetaClass -> i.e. its an abstraction of provide a single entry point for the validation.
  * @author Jose.Canova
@@ -25,20 +35,60 @@ public class MetaModel <T extends MetaClass> {
 	
 	@NotNull
 	private T clazz;
+	
+	private Map<String , Loaded<?>> attributeRegistry;
+	
+	private Map<String , Loaded<?>> relationRegistry;
 
-	private MetaModel(T clazz) {
+	private ClassLoader classLoader;
+
+	private MetaModel(T clazz , ClassLoader classLoader) {
 		this.clazz = clazz;
+		this.classLoader = classLoader;
+		attributeRegistry = new HashMap<>();
+		relationRegistry = new HashMap<>();
 	}
 	
-	public MetaModel<?> intialize(T clazz) {
-		return new MetaModel<>(clazz);
+	public static <T extends MetaClass> MetaModel<?> intialize(T clazz ,  ClassLoader classLoader) {
+		return new MetaModel<>(clazz , classLoader);
 	}
 	
-	public MetaModel<?> defineAttribute(MetaDataAttribute att) {
-		clazz.addMetaAttribute(att);
+	public MetaModel<?> defineAttribute(Provider<MetaDataAttribute> provider) {
+		provider
+			.get()
+			.ifPresentOrElse(a->registryAttributeInterface(a) , RuntimeException::new);
 		return this;
 	}
 	
+	private void registryAttributeInterface(MetaDataAttribute att) {
+		validateAttribute(att)
+		.map(a -> Map.<String,Loaded<?>> entry(a.getFieldName() , createAccessorMutatorInterface(a)))
+		.ifPresent(e -> attributeRegistry.entrySet().add(e));
+		clazz.addMetaAttribute(att);
+	}
+
+	private Loaded<?> createAccessorMutatorInterface(MetaDataAttribute a) {
+		return new ByteBuddy(ClassFileVersion.JAVA_V11)
+		.makeInterface()
+		.defineMethod(normalizeNameAccessor(a.getFieldName()), withReturnTypeDefinition(a.getClazz()) , Opcodes.ACC_PUBLIC)
+		.withoutCode()
+		.make().load(classLoader);
+	}
+
+	private TypeDefinition withReturnTypeDefinition(Class<?> clazz2) {
+		return TypeDescription.Generic.Builder.of(clazz2).build();
+	}
+
+	private String normalizeNameAccessor(String fieldName) {
+		String met = fieldName.substring(0, 1).toUpperCase().concat(fieldName.substring(1));
+		return new StringBuilder().append("get").append(met).toString();
+	}
+
+	//TODO: implement validation returning optional or empty
+	private Optional<MetaDataAttribute> validateAttribute(MetaDataAttribute att) {
+		return Optional.of(att);
+	}
+
 	public MetaModel<?> defineRelation(T type1 , RelationType relation1) {
 		MetaRelation mr = MetaRelation.builder().to(type1).type(relation1).build();
 		clazz
@@ -51,5 +101,12 @@ public class MetaModel <T extends MetaClass> {
 	
 	public Set<?> validate(Validator validator){
 		return validator.validate(clazz, Default.class);
+	}
+	
+	public static void main(String[] arg) {
+		MetaClass mc = new MetaClass();
+		MetaModel
+		.intialize(mc, mc.getClass().getClassLoader())
+		.defineAttribute(()-> Optional.of(MetaDataAttribute.builder().build()));
 	}
 }

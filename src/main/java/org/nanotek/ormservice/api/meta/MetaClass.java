@@ -30,18 +30,14 @@ public class MetaClass  {
 
 	public static final String DEFAULT_PACKAGE = "org.nanotek.entity";
 	
-	@Getter
 	@Setter
 	@JsonProperty("tableName")
 	protected String tableName;
-	
 
-	@Getter
 	@Setter	@JsonProperty("className")
 	protected String className; 
 	
 
-	@Getter
 	@Setter
 	@JsonProperty("classType")
 	protected MetaClassType classType;
@@ -53,14 +49,10 @@ public class MetaClass  {
 	@JsonIgnore
 	protected List<MetaRelation> metaRelations;
 
-
-	@Getter
 	@Setter
 	@JsonIgnore
 	private boolean hasPrimaryKey;
 
-
-	@Getter
 	@Setter
 	protected MetaIdentity identity;
 
