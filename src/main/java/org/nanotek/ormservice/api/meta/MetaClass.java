@@ -3,8 +3,9 @@ package org.nanotek.ormservice.api.meta;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import javax.validation.Valid;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -15,8 +16,10 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+//TODO:Define the validation groups for the MetaClass.
 @JsonInclude(value = Include.NON_NULL)
 @Data
+@Valid
 public class MetaClass  {
 
 	public static final String DEFAULT_PACKAGE = "org.nanotek.entity";

@@ -1,9 +1,12 @@
 package org.nanotek.ormservice.api.meta.model;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import javax.validation.Valid;
+import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
+import javax.validation.groups.Default;
 
 import org.nanotek.ormservice.api.meta.MetaClass;
 import org.nanotek.ormservice.api.meta.MetaDataAttribute;
@@ -46,4 +49,7 @@ public class MetaModel <T extends MetaClass> {
 		return this;
 	}
 	
+	public Set<?> validate(Validator validator){
+		return validator.validate(clazz, Default.class);
+	}
 }
