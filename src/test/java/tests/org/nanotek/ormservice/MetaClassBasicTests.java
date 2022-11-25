@@ -186,36 +186,25 @@ public class MetaClassBasicTests {
 	private void populateWithAttributes(MetaClass mt) {
 		mt.addMetaAttribute(createLongMetaAttribute());
 		mt.addMetaAttribute(createStringMetaAttribute());
-		mt.addMetaAttribute(createListMetaAttribute());
 	}
 
 	private MetaDataAttribute createLongMetaAttribute() {
 		return MetaDataAttribute
 				.builder()
 				.attributeType(AttributeType.Single)
-				.fieldName("t1")
+				.fieldName("att1")
 				.clazz(Long.class)
-				.columnName("t1").build();
+				.columnName("attc1").build();
 	}
 
 	private MetaDataAttribute createStringMetaAttribute() {
 		return MetaDataAttribute
 				.builder()
 				.attributeType(AttributeType.Single)
-				.fieldName("t2")
+				.fieldName("att2")
 				.clazz(String.class)
-				.columnName("t2")
+				.columnName("attc2")
 				.length("255")
-				.build();
-	}
-
-	private MetaDataAttribute createListMetaAttribute() {
-		return MetaDataAttribute
-				.builder()
-				.attributeType(AttributeType.List)
-				.fieldName("t3")
-				.clazz(Long.class)
-				.columnName("t3")
 				.build();
 	}
 
@@ -236,11 +225,10 @@ public class MetaClassBasicTests {
 	}
 
 	private MetaClass createBasicMetaClass() {
-		MetaClass cm = new  MetaClass();
-		cm.setTableName("test");
-		cm.setClassName("Test");
-		cm.setClassType(MetaClassType.EntityClass);
-		return cm;
+		return MetaClass.builder()
+					.tableName("test")
+					.className("Test")
+					.classType(MetaClassType.EntityClass).build();
 	}
 
 }

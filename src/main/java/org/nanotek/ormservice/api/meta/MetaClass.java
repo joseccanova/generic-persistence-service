@@ -3,6 +3,7 @@ package org.nanotek.ormservice.api.meta;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import javax.validation.Valid;
@@ -12,14 +13,20 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 //TODO:Define the validation groups for the MetaClass.
 @JsonInclude(value = Include.NON_NULL)
 @Data
 @Valid
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MetaClass  {
 
 	public static final String DEFAULT_PACKAGE = "org.nanotek.entity";
@@ -40,8 +47,7 @@ public class MetaClass  {
 	@JsonProperty("classType")
 	protected MetaClassType classType;
 	
-	protected List<MetaDataAttribute> metaAttributes = new ArrayList<MetaDataAttribute>();
-
+	protected List<MetaDataAttribute> metaAttributes;
 
 	@Getter
 	@Setter
@@ -60,6 +66,13 @@ public class MetaClass  {
 	protected MetaIdentity identity;
 
 	public boolean addMetaAttribute(MetaDataAttribute attr) {
+		return Optional
+			.ofNullable(metaAttributes)
+			.map(attrs-> attrs.add(attr)).orElse (createAndAdd(attr));
+	}
+
+	private Boolean createAndAdd(MetaDataAttribute attr) {
+		metaAttributes=new ArrayList<>();
 		return metaAttributes.add(attr);
 	}
 
