@@ -147,7 +147,7 @@ public class BaseConfiguration implements ApplicationContextAware{
 
 	@Bean
 	public MetaClassDynamicTypeBuilder getMetaClassClassBuilder() {
-		return new MetaClassDynamicTypeBuilder();
+		return MetaClassDynamicTypeBuilder.instance();
 	}
 
 	@Bean

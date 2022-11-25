@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import net.bytebuddy.dynamic.DynamicType.Loaded;
 import net.bytebuddy.dynamic.loading.InjectionClassLoader;
 
 @SpringBootTest(classes = {BaseConfiguration.class , OrmServiceApplication.class})
@@ -42,19 +43,19 @@ public class MetaClassBasicTests {
 
 	@Autowired
 	InjectionClassLoader classLoader;
-	
+
 	@Autowired
 	@BeanFactory
 	DefaultListableBeanFactory beanFactory;
-	
+
 	@Autowired
 	@TypeService
 	DynamicTypeService typeService;
-	
+
 	@Autowired
 	@RelationTypeService
 	DynamicTypeRelationService dynamicTypeRelationService;
-	
+
 	public void basicMetaClassCreationTest() {
 		MetaClass mt = createBasicMetaClassAndPopulateWithAttributes();
 		createIdentity(mt);
@@ -89,27 +90,34 @@ public class MetaClassBasicTests {
 		MetaClass mt2 = createBasicMetaClassAndPopulateWithAttributes();
 		MetaClass mt3 = createBasicMetaClassAndPopulateWithAttributes();
 		createIdentity(mt2);
+		createIdentity(mt3);
 		changeName(mt2 , "Test2");
 		changeName(mt3 , "Test3");
-		createRelation(mt1 , mt2);
-		assertTrue(mt1.getMetaRelations().size()==1);
+		createManyRelation(mt1 , mt2 , mt3);
+		assertTrue(mt1.getMetaRelations().size()==2);
 		typeService.build(mt1);
-		typeService.build(mt2);
-		typeService.build(mt3);
+		Loaded <?> loaded2 = typeService.build(mt2).get();
+		Loaded <?> loaded3 = typeService.build(mt3).get();
 		dynamicTypeRelationService.processRelationClasses();
-		var className = mt1.defaultFullClassName();
 		var clsRelationName = mt1.defaultFullClassName()+"Relation";
 		try {
-			classLoader.loadClass(clsRelationName);
+			Class<?> cls = classLoader.loadClass(clsRelationName);
+			assertTrue( Stream
+				.of(cls.getDeclaredFields())
+				.anyMatch(f -> f.getType().equals(loaded2.getLoaded())));
+			assertTrue(Stream
+			.of(cls.getDeclaredFields())
+			.anyMatch(f -> f.getType().equals(List.class)));
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			assertTrue(false);
 		}
 	}
-	
-	private void createRelation(MetaClass mt1, MetaClass mt2) {
+
+	private void createManyRelation(MetaClass mt1, MetaClass mt2 , MetaClass mt3) {
 		MetaRelation mr = MetaRelation.builder().to(mt2).type(RelationType.ONE).build();
-		mt1.setMetaRelations(List.<MetaRelation>of(mr));
+		MetaRelation mr1 = MetaRelation.builder().to(mt3).type(RelationType.MANY).build();
+		mt1.setMetaRelations(List.<MetaRelation>of(mr , mr1));
 	}
 
 	private void changeName(MetaClass mt2, String string) {
@@ -120,20 +128,20 @@ public class MetaClassBasicTests {
 	@Autowired
 	@Qualifier("classCache")
 	Map<String,MetaClass> classCache;
-	
+
 	private void verifyClassCacheMetaClass() {
 		assertTrue (classCache.entrySet().size() >0);
 	}
 
 	private void verifyIdAnnotation(Field[] declaredFields) {
 		assertTrue (Stream.of(declaredFields)
-		.anyMatch(f -> hasIdAnnotation(f)));
+				.anyMatch(f -> hasIdAnnotation(f)));
 	}
 
 	private boolean hasIdAnnotation(Field f) {
 		return Stream.of(f.getAnnotations()).anyMatch(a -> a.annotationType().equals(Id.class));
 	}
-	
+
 	private void verifyStringField(Field[] declaredFields) {
 		assertTrue(Stream.of(declaredFields)
 				.filter(f -> f.getType().equals(String.class)).count() > 0);		
@@ -141,12 +149,12 @@ public class MetaClassBasicTests {
 
 	private void verifyLongField(Field[] declaredFields) {
 		assertTrue(Stream.of(declaredFields)
-		.filter(f -> f.getType().equals(Long.class)).count() > 1);
+				.filter(f -> f.getType().equals(Long.class)).count() > 1);
 	}
-	
+
 	private void verifyListField(Field[] declaredFields) {
 		assertTrue(Stream.of(declaredFields)
-		.filter(f -> f.getType().equals(List.class)).count() > 0);
+				.filter(f -> f.getType().equals(List.class)).count() > 0);
 	}
 
 	@Test
@@ -158,7 +166,7 @@ public class MetaClassBasicTests {
 		MetaIdentity mt = createBasicMetaIdentity();
 		mc.setIdentity(mt);
 	}
-	
+
 	private MetaIdentity createBasicMetaIdentity() {
 		return MetaIdentity.builder().attributes(createLongIdentityAttribute() ).name("testId").type(MetaIdentity.IdentityType.Identity).build();
 	}
@@ -176,9 +184,9 @@ public class MetaClassBasicTests {
 	}
 
 	private void populateWithAttributes(MetaClass mt) {
-			mt.addMetaAttribute(createLongMetaAttribute());
-			mt.addMetaAttribute(createStringMetaAttribute());
-			mt.addMetaAttribute(createListMetaAttribute());
+		mt.addMetaAttribute(createLongMetaAttribute());
+		mt.addMetaAttribute(createStringMetaAttribute());
+		mt.addMetaAttribute(createListMetaAttribute());
 	}
 
 	private MetaDataAttribute createLongMetaAttribute() {
@@ -200,7 +208,7 @@ public class MetaClassBasicTests {
 				.length("255")
 				.build();
 	}
-	
+
 	private MetaDataAttribute createListMetaAttribute() {
 		return MetaDataAttribute
 				.builder()
@@ -214,25 +222,25 @@ public class MetaClassBasicTests {
 	private void assertEntityAnnotation(Class<?> cls) {
 		Annotation[] anottations = cls.getAnnotations();
 		boolean b = Stream
-			.of(anottations)
-			.filter(a -> a.annotationType().equals(Entity.class)).count()==1;
+				.of(anottations)
+				.filter(a -> a.annotationType().equals(Entity.class)).count()==1;
 		assertTrue(b);
 	}
 
 	private void assertTableAnnotation(Class<?> cls) {
 		Annotation[] anottations = cls.getAnnotations();
 		boolean b = Stream
-			.of(anottations)
-			.filter(a -> a.annotationType().equals(Table.class)).count()==1;
+				.of(anottations)
+				.filter(a -> a.annotationType().equals(Table.class)).count()==1;
 		assertTrue(b);
 	}
-	
+
 	private MetaClass createBasicMetaClass() {
 		MetaClass cm = new  MetaClass();
-						cm.setTableName("test");
-						cm.setClassName("Test");
-						cm.setClassType(MetaClassType.EntityClass);
+		cm.setTableName("test");
+		cm.setClassName("Test");
+		cm.setClassType(MetaClassType.EntityClass);
 		return cm;
 	}
-	
+
 }

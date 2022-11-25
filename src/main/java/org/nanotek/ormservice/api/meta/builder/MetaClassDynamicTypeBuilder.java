@@ -34,9 +34,14 @@ import net.bytebuddy.implementation.FixedValue;
 @Slf4j
 public class MetaClassDynamicTypeBuilder {
 
-	public MetaClassDynamicTypeBuilder() {
+	private Builder<?> bd = null;
+			
+	private MetaClassDynamicTypeBuilder() {
 	}
 	
+	public static MetaClassDynamicTypeBuilder instance() {
+		return new MetaClassDynamicTypeBuilder();
+	}
 	
 	public Builder<?> build(MetaClass cm11) {
 		String myClassName = cm11.getClassName();
@@ -108,5 +113,5 @@ public class MetaClassDynamicTypeBuilder {
 				.map(as -> as.get(0))
 				.map(a -> a.getClazz());
 	}
-
+	
 }

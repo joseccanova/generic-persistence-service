@@ -2,11 +2,9 @@ package org.nanotek.ormservice.api.meta.service;
 
 import java.util.Map;
 
-import org.nanotek.ormservice.BeanFactory;
 import org.nanotek.ormservice.api.meta.MetaClass;
 import org.nanotek.ormservice.api.meta.builder.MetaClassRelationsBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import net.bytebuddy.dynamic.loading.InjectionClassLoader;
 

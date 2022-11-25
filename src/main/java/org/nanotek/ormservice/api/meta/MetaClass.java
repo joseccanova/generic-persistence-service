@@ -3,6 +3,8 @@ package org.nanotek.ormservice.api.meta;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -74,7 +76,11 @@ public class MetaClass  {
 		return new StringBuilder().append(DEFAULT_PACKAGE).append('.').append(className).toString();
 	}
 	
-	public Optional<?> hasRelations() {
-		return Optional.ofNullable(metaRelations).filter(r -> r.size()>0);
+	public Optional<List<MetaRelation>> hasRelations() {
+		return Optional.ofNullable(metaRelations);
+	}
+	
+	public List<MetaRelation> setRelations(Supplier<List<MetaRelation>> rl) {
+		return rl.get();
 	}
 }
