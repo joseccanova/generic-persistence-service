@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import net.bytebuddy.dynamic.loading.InjectionClassLoader;
 
+//TODO: exclude the loop in the class cache.
 public class DynamicTypeRelationService {
 
 	@Autowired
