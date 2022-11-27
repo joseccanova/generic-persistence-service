@@ -123,20 +123,32 @@ public class MetaClassBasicTests {
 	public void testMetaModel() {
 		MetaModel<?> mm = MetaModel
 		.intialize(createBasicMetaClass(), classLoader)
-		.defineAttribute(createLongMetaAttribute());
-		assertTrue(mm.getAttributeRegistry().size()>0);
+		.defineAttribute(createLongMetaAttribute())
+		.defineAttribute(createStringMetaAttribute());
+		assertTrue(mm.getAttributeRegistry().size()>1);
 		changeName(mm.getClazz(), "Test4");
 		createIdentity(mm.getClazz());
-		Loaded<?> loaded = typeService.build(mm.getClazz()).orElseThrow();
 		try {
-			Object instance = loaded.getLoaded().newInstance();
-			log.debug("the instance {}" , instance);
-		} catch (InstantiationException | IllegalAccessException e) {
+			Optional
+			.of(typeService.build(mm.getClazz()).orElseThrow())
+			.map(l -> l.getLoaded())
+			.ifPresent(clazz -> checkInstance(clazz));
+		} catch (Exception e) {
 			log.debug("the problem {}" , e);
 			assertTrue(false);
 		}
 	}
 	
+	private Object checkInstance(Class<?> clazz) {
+		try {
+			return clazz.getConstructor(new Class[0]).newInstance(new Object[0]);
+		} catch (Exception e) {
+			log.debug("the problem {}" , e);
+			assertTrue(false);
+		}
+		return null;
+	}
+
 	@Test
 	@Order(3)
 	public void testReactiveBuildModel()
@@ -187,7 +199,6 @@ public class MetaClassBasicTests {
 				.filter(f -> f.getType().equals(List.class)).count() > 0);
 	}
 
-	@Test
 	public void classAndAttributesCreationTest() {
 		createBasicMetaClassAndPopulateWithAttributes();
 	}
@@ -260,5 +271,6 @@ public class MetaClassBasicTests {
 					.className("Test")
 					.classType(MetaClassType.EntityClass).build();
 	}
+
 
 }
