@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.validation.Valid;
 
@@ -63,10 +65,15 @@ public class MetaClass  {
 	}
 
 	private Boolean createAndAdd(MetaDataAttribute attr) {
-		metaAttributes=new ArrayList<>();
-		return metaAttributes.add(attr);
+		return create(attr).size()>0;
 	}
 
+	private List<MetaDataAttribute> create (MetaDataAttribute attr){
+		return metaAttributes = Stream
+				.of(attr)
+				.collect(Collectors.toList());
+	}
+	
 	public void hasPrimaryKey(boolean b) {
 		this.hasPrimaryKey=b;
 	}
