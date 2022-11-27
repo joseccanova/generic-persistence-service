@@ -4,6 +4,7 @@ import static net.bytebuddy.matcher.ElementMatchers.named;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;

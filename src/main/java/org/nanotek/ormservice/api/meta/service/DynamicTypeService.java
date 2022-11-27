@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.nanotek.ormservice.api.meta.MetaClass;
 import org.nanotek.ormservice.api.meta.builder.MetaClassDynamicTypeBuilder;
+import org.nanotek.ormservice.api.meta.model.MetaModel;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.bytebuddy.dynamic.DynamicType.Builder;
@@ -22,11 +23,10 @@ public class DynamicTypeService {
 	@Autowired
 	Map<String, MetaClass> classCache;
 	
-	public Optional<Loaded<?>> build(MetaClass metaClass){
-		Builder<?> builder = classBuilder.build(metaClass);
-		Loaded<?> loaded = builder.make().load(classLoader);
-		classCache.put(metaClass.defaultFullClassName(), metaClass);
-		return Optional.of(loaded);
+	public Optional<Loaded<?>> build(MetaClass mc){
+		return Optional
+			.of(classCache.put(mc.defaultFullClassName(), mc))
+			.map(m -> classBuilder.build(m))
+			.map(b -> b.make().load(classLoader));
 	}
-
 }

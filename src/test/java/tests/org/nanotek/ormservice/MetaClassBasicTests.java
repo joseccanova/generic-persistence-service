@@ -37,9 +37,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.dynamic.DynamicType.Loaded;
 import net.bytebuddy.dynamic.loading.InjectionClassLoader;
 
+@Slf4j
 @SpringBootTest(classes = {BaseConfiguration.class , OrmServiceApplication.class})
 public class MetaClassBasicTests {
 
@@ -121,8 +123,24 @@ public class MetaClassBasicTests {
 	public void testMetaModel() {
 		MetaModel<?> mm = MetaModel
 		.intialize(createBasicMetaClass(), classLoader)
-		.defineAttribute(Optional.of(createLongMetaAttribute()));
+		.defineAttribute(createLongMetaAttribute());
 		assertTrue(mm.getAttributeRegistry().size()>0);
+		changeName(mm.getClazz(), "Test4");
+		createIdentity(mm.getClazz());
+		Loaded<?> loaded = typeService.build(mm.getClazz()).orElseThrow();
+		try {
+			Object instance = loaded.getLoaded().newInstance();
+			log.debug("the instance {}" , instance);
+		} catch (InstantiationException | IllegalAccessException e) {
+			log.debug("the problem {}" , e);
+			assertTrue(false);
+		}
+	}
+	
+	@Test
+	@Order(3)
+	public void testReactiveBuildModel()
+	{
 		
 	}
 

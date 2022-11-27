@@ -33,43 +33,57 @@ import net.bytebuddy.jar.asm.Opcodes;
 @Valid
 public class MetaModel <T extends MetaClass> {
 	
+	@Getter
 	@NotNull
 	private T clazz;
 	
 	@Getter
 	private Map<String , Loaded<?>> attributeRegistry;
 	
+	@Getter
 	private Map<String , Loaded<?>> relationRegistry;
 
+	@NotNull
 	private ClassLoader classLoader;
-
+	
 	private MetaModel(T clazz , ClassLoader classLoader) {
-		this.clazz = clazz;
-		this.classLoader = classLoader;
-		attributeRegistry = new HashMap<>();
-		relationRegistry = new HashMap<>();
+		this.clazz = Optional.ofNullable(clazz).orElseThrow();
+		this.classLoader = Optional.ofNullable(classLoader).orElseThrow();
+		initAttributeRegistry();
 	}
 	
+	private void initAttributeRegistry() {
+		attributeRegistry = new HashMap<>();
+	}
+
 	public static <T extends MetaClass> MetaModel<?> intialize(T clazz ,  ClassLoader classLoader) {
 		return new MetaModel<>(clazz , classLoader);
 	}
 	
-	public MetaModel<?> defineAttribute(Optional<MetaDataAttribute> provider) {
-		provider
-			.ifPresentOrElse(a->registryAttributeInterface(a) , RuntimeException::new);
+	public MetaModel<?> defineAttribute(MetaDataAttribute provider) {
+		Optional
+			.ofNullable(provider)
+			.filter(a->registryAttributeInterface(a))
+			.orElseThrow();
 		return this;
 	}
 	
-	private void registryAttributeInterface(MetaDataAttribute att) {
-		validateAttribute(att)
-		.ifPresent(e -> attributeRegistry.put(e.getFieldName() , createAccessorMutatorInterface(e)));
-		clazz.addMetaAttribute(att);
+	private boolean registryAttributeInterface(MetaDataAttribute att) {
+		return validateAttribute(att)
+		.filter(a -> clazz.addMetaAttribute(a))
+		.map(a -> createAccessorMutatorInterface(a))
+		.map(e -> attributeRegistry.put(e.getLoaded().getSimpleName() , e))
+		.isPresent();
 	}
 
 	private Loaded<?> createAccessorMutatorInterface(MetaDataAttribute a) {
 		return new ByteBuddy(ClassFileVersion.JAVA_V11)
 		.makeInterface()
+		.name("I".concat(normalizeFieldName(a.getFieldName())))
 		.defineMethod(normalizeNameAccessor(a.getFieldName()), withReturnTypeDefinition(a.getClazz()) , Opcodes.ACC_PUBLIC)
+		.withoutCode()
+		.defineMethod(normalizeNameMutator(a.getFieldName()) , Void.class , Opcodes.ACC_PUBLIC)
+		.withParameter(a.getClazz())
 		.withoutCode()
 		.make().load(classLoader);
 	}
@@ -78,9 +92,14 @@ public class MetaModel <T extends MetaClass> {
 		return TypeDescription.Generic.Builder.of(clazz2).build();
 	}
 
+	private String normalizeFieldName(String fieldName) {
+		return fieldName.substring(0, 1).toUpperCase().concat(fieldName.substring(1));
+	}
+	private String normalizeNameMutator(String fieldName) {
+		return new StringBuilder().append("set").append(normalizeFieldName(fieldName)).toString();
+	}
 	private String normalizeNameAccessor(String fieldName) {
-		String met = fieldName.substring(0, 1).toUpperCase().concat(fieldName.substring(1));
-		return new StringBuilder().append("get").append(met).toString();
+		return new StringBuilder().append("get").append(normalizeFieldName(fieldName)).toString();
 	}
 
 	//TODO: implement validation returning optional or empty
@@ -102,5 +121,5 @@ public class MetaModel <T extends MetaClass> {
 	public Set<?> validate(Validator validator){
 		return validator.validate(clazz, Default.class);
 	}
-	
+
 }

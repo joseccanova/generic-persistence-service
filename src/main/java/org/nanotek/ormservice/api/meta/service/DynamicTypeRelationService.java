@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import net.bytebuddy.dynamic.loading.InjectionClassLoader;
 
-//TODO: exclude the loop in the class cache.
+//TODO: refactor to a fluent return.
 public class DynamicTypeRelationService {
 
 	@Autowired
@@ -29,8 +29,10 @@ public class DynamicTypeRelationService {
 		.hasRelations()
 		.ifPresent(r -> 
 			 { 
-				 var bd = relationBuilder.build(classLoader, metaClass);
-				 bd.make().load(classLoader);
+				 relationBuilder
+				 	.build(classLoader, metaClass)
+				 	.make()
+				 	.load(classLoader);
 			 });
 	}
 	
