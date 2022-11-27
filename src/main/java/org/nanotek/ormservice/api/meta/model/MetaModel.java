@@ -62,7 +62,7 @@ public class MetaModel <T extends MetaClass> {
 	
 	public MetaModel<?> defineAttribute(MetaDataAttribute provider) {
 		validateAttribute(provider)
-		.filter(a -> clazz.addMetaAttribute(a))
+		.filter(clazz::addMetaAttribute)
 		.map(a -> createAccessorMutatorInterface(a))
 		.ifPresentOrElse(l -> {
 			attributeRegistry.put(l.getLoaded().getSimpleName() , l);
