@@ -44,7 +44,7 @@ package org.nanotek.beans.sun.decoder;
  * </dl>
  *
  * @since 1.7
- *
+ * @deprecated
  * @author Sergey A. Malenkov
  */
 final class ShortElementHandler extends StringElementHandler {
@@ -58,6 +58,7 @@ final class ShortElementHandler extends StringElementHandler {
      */
     @Override
     public Object getValue(String argument) {
-        return Short.decode(argument);
+//        return Short.decode(argument);
+    	throw new RuntimeException();
     }
 }

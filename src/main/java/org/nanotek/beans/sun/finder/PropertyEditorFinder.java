@@ -57,7 +57,7 @@ public final class PropertyEditorFinder
 
         this.registry = new WeakCache<Class<?>, Class<?>>();
         this.registry.put(Byte.TYPE, ByteEditor.class);
-        this.registry.put(Short.TYPE, ShortEditor.class);
+//        this.registry.put(Short.TYPE, ShortEditor.class);
         this.registry.put(Integer.TYPE, IntegerEditor.class);
         this.registry.put(Long.TYPE, LongEditor.class);
         this.registry.put(Boolean.TYPE, BooleanEditor.class);

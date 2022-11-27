@@ -99,7 +99,7 @@ public class MetaClassBasicTests {
 		changeName(mt3 , "Test3");
 		createManyRelation(mt1 , mt2 , mt3);
 		assertTrue(mt1.getMetaRelations().size()==2);
-		typeService.build(mt1);
+		Loaded<?> loaded1 = typeService.build(mt1).get();
 		Loaded <?> loaded2 = typeService.build(mt2).get();
 		Loaded <?> loaded3 = typeService.build(mt3).get();
 		dynamicTypeRelationService.processRelationClasses();
@@ -214,8 +214,8 @@ public class MetaClassBasicTests {
 	}
 
 	private void populateWithAttributes(MetaClass mt) {
-		mt.addMetaAttribute(createLongMetaAttribute());
-		mt.addMetaAttribute(createStringMetaAttribute());
+		assertTrue(mt.addMetaAttribute(createLongMetaAttribute()));
+		assertTrue(mt.addMetaAttribute(createStringMetaAttribute()));
 	}
 
 	private MetaDataAttribute createLongMetaAttribute() {

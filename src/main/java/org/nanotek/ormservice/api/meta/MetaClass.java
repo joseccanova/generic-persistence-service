@@ -65,13 +65,10 @@ public class MetaClass  {
 	}
 
 	private Boolean createAndAdd(MetaDataAttribute attr) {
-		return create(ArrayList::new).add(attr);
+		metaAttributes = new ArrayList<>();
+		return metaAttributes.add(attr);
 	}
 
-	private List<MetaDataAttribute> create (Supplier<List<MetaDataAttribute>> sup){
-		return metaAttributes = sup.get();
-	}
-	
 	public void hasPrimaryKey(boolean b) {
 		this.hasPrimaryKey=b;
 	}

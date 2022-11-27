@@ -70,7 +70,7 @@ public final class PrimitiveWrapperMap {
         map.put(Boolean.TYPE.getName(), Boolean.class);
         map.put(Character.TYPE.getName(), Character.class);
         map.put(Byte.TYPE.getName(), Byte.class);
-        map.put(Short.TYPE.getName(), Short.class);
+//        map.put(Short.TYPE.getName(), Short.class);
         map.put(Integer.TYPE.getName(), Integer.class);
         map.put(Long.TYPE.getName(), Long.class);
         map.put(Float.TYPE.getName(), Float.class);

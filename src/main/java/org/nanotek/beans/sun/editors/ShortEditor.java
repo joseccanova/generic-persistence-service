@@ -26,6 +26,7 @@
 
 package org.nanotek.beans.sun.editors;
 
+@Deprecated
 public class ShortEditor extends NumberEditor {
 
     public String getJavaInitializationString() {
@@ -36,7 +37,8 @@ public class ShortEditor extends NumberEditor {
     }
 
     public void setAsText(String text) throws IllegalArgumentException {
-        setValue((text == null) ? null : Short.decode(text));
+//        setValue((text == null) ? null : Short.decode(text));
+    	throw new RuntimeException();
     }
 
 }

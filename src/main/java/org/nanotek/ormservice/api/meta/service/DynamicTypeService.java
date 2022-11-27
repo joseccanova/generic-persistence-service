@@ -23,10 +23,11 @@ public class DynamicTypeService {
 	Map<String, MetaClass> classCache;
 	
 	public Optional<Loaded<?>> build(MetaClass mc){
+		MetaClass added = classCache.put(mc.defaultFullClassName(), mc);
 		return Optional
-			.of(classCache.put(mc.defaultFullClassName(), mc))
-			.map(classBuilder::build)
-			.map(Builder::make)
+			.of(mc)
+			.map(c -> classBuilder.build(c))
+			.map(bd -> bd.make())
 			.map(u -> u.load(classLoader));
 	}
 }
