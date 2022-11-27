@@ -107,6 +107,7 @@ public class MetaModel <T extends MetaClass> {
 		return Optional.of(att);
 	}
 
+	//TODO:decompose method
 	public MetaModel<?> defineRelation(T type1 , RelationType relation1) {
 		MetaRelation mr = MetaRelation.builder().to(type1).type(relation1).build();
 		clazz
