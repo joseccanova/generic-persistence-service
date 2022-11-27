@@ -61,15 +61,18 @@ public class MetaModel <T extends MetaClass> {
 	}
 	
 	public MetaModel<?> defineAttribute(MetaDataAttribute provider) {
-		validateAttribute(provider)
-		.filter(clazz::addMetaAttribute)
-		.map(a -> createAccessorMutatorInterface(a))
-		.ifPresentOrElse(l -> {
-			attributeRegistry.put(l.getLoaded().getSimpleName() , l);
-		} , RuntimeException::new);
-		return this;
+		return validateAttribute(provider)
+					.filter(clazz::addMetaAttribute)
+					.map(this::createAccessorMutatorInterface)
+					.map(this::registerAttribute)
+					.orElseThrow();
 	}
 	
+	private MetaModel<T> registerAttribute(Loaded<?> l) {
+		attributeRegistry.put(l.getLoaded().getSimpleName() , l);
+		return this;
+	}
+
 	private Loaded<?> createAccessorMutatorInterface(MetaDataAttribute a) {
 		return new ByteBuddy(ClassFileVersion.JAVA_V11)
 		.makeInterface()
