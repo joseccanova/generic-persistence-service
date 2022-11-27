@@ -65,13 +65,11 @@ public class MetaClass  {
 	}
 
 	private Boolean createAndAdd(MetaDataAttribute attr) {
-		return create(attr).size()>0;
+		return create(ArrayList::new).add(attr);
 	}
 
-	private List<MetaDataAttribute> create (MetaDataAttribute attr){
-		return metaAttributes = Stream
-				.of(attr)
-				.collect(Collectors.toList());
+	private List<MetaDataAttribute> create (Supplier<List<MetaDataAttribute>> sup){
+		return metaAttributes = sup.get();
 	}
 	
 	public void hasPrimaryKey(boolean b) {
