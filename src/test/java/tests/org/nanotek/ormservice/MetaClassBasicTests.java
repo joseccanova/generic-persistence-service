@@ -3,12 +3,17 @@ package tests.org.nanotek.ormservice;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Flow;
+import java.util.concurrent.Flow.Subscription;
+import java.util.concurrent.SubmissionPublisher;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import javax.persistence.Entity;
@@ -20,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.nanotek.ormservice.BaseConfiguration;
 import org.nanotek.ormservice.BeanFactory;
 import org.nanotek.ormservice.OrmServiceApplication;
+import org.nanotek.ormservice.Provider;
 import org.nanotek.ormservice.api.meta.MetaClass;
 import org.nanotek.ormservice.api.meta.MetaClassType;
 import org.nanotek.ormservice.api.meta.MetaDataAttribute;
@@ -27,6 +33,7 @@ import org.nanotek.ormservice.api.meta.MetaDataAttribute.AttributeType;
 import org.nanotek.ormservice.api.meta.MetaIdentity;
 import org.nanotek.ormservice.api.meta.MetaRelation;
 import org.nanotek.ormservice.api.meta.RelationType;
+import org.nanotek.ormservice.api.meta.builder.MetaClassDynamicTypeBuilder;
 import org.nanotek.ormservice.api.meta.model.MetaModel;
 import org.nanotek.ormservice.api.meta.service.DynamicTypeRelationService;
 import org.nanotek.ormservice.api.meta.service.DynamicTypeService;
@@ -38,6 +45,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.dynamic.DynamicType.Loaded;
 import net.bytebuddy.dynamic.loading.InjectionClassLoader;
 
@@ -86,8 +94,6 @@ public class MetaClassBasicTests {
 		}
 	}
 
-	@Test
-	@Order(value = 1)
 	public void basicMetaClassRelationTest() {
 		MetaClass mt1 = createBasicMetaClassAndPopulateWithAttributes();
 		createIdentity(mt1);
@@ -121,27 +127,33 @@ public class MetaClassBasicTests {
 	@Test
 	@Order(2)
 	public void testMetaModel() {
-		MetaModel<?> mm = MetaModel
-		.intialize(createBasicMetaClass(), classLoader)
-		.defineAttribute(createLongMetaAttribute())
-		.defineAttribute(createStringMetaAttribute());
-		assertTrue(mm.getAttributeRegistry().size()>1);
-		changeName(mm.getClazz(), "Test4");
+		MetaModel<?> mm =  createBasicMetaClass()
+		.map(m-> MetaModel
+				.intialize(m, classLoader))
+		.map(m->m.defineAttribute(createStringMetaAttribute()))
+		.map(m->m.defineAttribute(createLongMetaAttribute())).orElseThrow();
+		changeName(mm.getClazz(), "Test4Instance");
 		createIdentity(mm.getClazz());
 		try {
+			Builder<?> db = MetaClassDynamicTypeBuilder.instance().build(mm.getClazz());
+			Loaded<?> loaded = mm.buildFromModel(db).make().load(classLoader);
 			Optional
-			.of(typeService.build(mm.getClazz()).orElseThrow())
-			.map(l -> l.getLoaded())
-			.ifPresent(clazz -> checkInstance(clazz));
+			.of(loaded)
+//			.map(l -> l.getLoaded())
+			.map(clazz -> checkInstance(clazz))
+			.ifPresentOrElse(i -> log.debug("the instance {}" , i), RuntimeException::new);
 		} catch (Exception e) {
 			log.debug("the problem {}" , e);
 			assertTrue(false);
 		}
 	}
 	
-	private Object checkInstance(Class<?> clazz) {
+	private Object checkInstance(Loaded<?> loaded) {
 		try {
-			return clazz.getConstructor(new Class[0]).newInstance(new Object[0]);
+			Class<?> clazz = loaded.getLoaded();
+			loaded.saveIn(new File("c:/java"));
+			Object instance =  clazz.getConstructor(new Class[0]).newInstance(new Object[0]);
+			return instance;
 		} catch (Exception e) {
 			log.debug("the problem {}" , e);
 			assertTrue(false);
@@ -149,11 +161,15 @@ public class MetaClassBasicTests {
 		return null;
 	}
 
-	@Test
-	@Order(3)
-	public void testReactiveBuildModel()
-	{
+	public void testSimpleReactiveApi()
+	{   
+		MySubscriber fs = new MySubscriber();
+		sp.subscribe(fs);
+		sp.submit("this is a string BIG STRING");
+		sp.close();
 		
+		org.awaitility.Awaitility.
+		 await().until(() -> fs.checkCompleted());;
 	}
 
 	private void createManyRelation(MetaClass mt1, MetaClass mt2 , MetaClass mt3) {
@@ -219,14 +235,16 @@ public class MetaClassBasicTests {
 	}
 
 	private MetaClass createBasicMetaClassAndPopulateWithAttributes() {
-		MetaClass mt = createBasicMetaClass();
-		populateWithAttributes(mt);
-		return mt;
+		return createBasicMetaClass()
+			.map(m -> 
+					populateWithAttributes(m))
+			.orElseThrow();
 	}
 
-	private void populateWithAttributes(MetaClass mt) {
+	private MetaClass populateWithAttributes(MetaClass mt) {
 		assertTrue(mt.addMetaAttribute(createLongMetaAttribute()));
 		assertTrue(mt.addMetaAttribute(createStringMetaAttribute()));
+		return mt;
 	}
 
 	private MetaDataAttribute createLongMetaAttribute() {
@@ -265,12 +283,44 @@ public class MetaClassBasicTests {
 		assertTrue(b);
 	}
 
-	private MetaClass createBasicMetaClass() {
-		return MetaClass.builder()
+	private Optional<MetaClass>  createBasicMetaClass() {
+		return Optional.ofNullable( MetaClass.builder()
 					.tableName("test")
 					.className("Test")
-					.classType(MetaClassType.EntityClass).build();
+					.classType(MetaClassType.EntityClass).build()
+		);
 	}
 
+	SubmissionPublisher<String> sp = new SubmissionPublisher<>();
+	
+	static class MySubscriber implements Flow.Subscriber<String> {
+
+		private boolean completed = false;
+
+		@Override
+		public void onSubscribe(Subscription subscription) {
+			subscription.request(1);
+		}
+
+		@Override
+		public void onNext(String item) {
+			log.debug("next {}" , item);
+			completed = true;
+		}
+
+		@Override
+		public void onError(Throwable throwable) {
+			log.debug("error {} " , throwable);
+		}
+
+		@Override
+		public void onComplete() {
+			log.debug("complete");
+		}
+		
+		public boolean checkCompleted() {
+			return completed;
+		}
+	};
 
 }

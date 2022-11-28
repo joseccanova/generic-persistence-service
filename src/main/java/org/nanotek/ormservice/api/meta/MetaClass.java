@@ -59,13 +59,14 @@ public class MetaClass  {
 	protected MetaIdentity identity;
 
 	public boolean addMetaAttribute(MetaDataAttribute attr) {
-		return Optional
-			.ofNullable(metaAttributes)
-			.map(attrs-> attrs.add(attr)).orElse (createAndAdd(attr));
+		if (metaAttributes==null)
+			return	createAndAdd(ArrayList::new, attr);
+		else 
+			return metaAttributes.add(attr);
 	}
 
-	private Boolean createAndAdd(MetaDataAttribute attr) {
-		metaAttributes = new ArrayList<>();
+	private Boolean createAndAdd(Supplier<List<MetaDataAttribute>> sup , MetaDataAttribute attr) {
+		metaAttributes = sup.get();
 		return metaAttributes.add(attr);
 	}
 

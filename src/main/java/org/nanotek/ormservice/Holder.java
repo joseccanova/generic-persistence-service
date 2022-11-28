@@ -1,6 +1,7 @@
 package org.nanotek.ormservice;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class Holder<S> {
 	S s;
@@ -17,5 +18,9 @@ public class Holder<S> {
 		return "Holder [s=" + s + "]";
 	}
 	
+	public static <S>  Holder<S> with(Supplier<Holder<S>> sup , S s)
+	{
+		return sup.get().put(s);
+	}
 	
 }

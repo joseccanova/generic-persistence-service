@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.nanotek.ormservice.Base;
 import org.nanotek.ormservice.Holder;
@@ -114,5 +115,5 @@ public class MetaClassDynamicTypeBuilder {
 				.map(as -> as.get(0))
 				.map(a -> a.getClazz());
 	}
-	
+
 }

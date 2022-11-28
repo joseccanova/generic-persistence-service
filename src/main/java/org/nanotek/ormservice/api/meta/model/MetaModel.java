@@ -1,10 +1,13 @@
 package org.nanotek.ormservice.api.meta.model;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.validation.Validator;
@@ -15,12 +18,14 @@ import org.nanotek.ormservice.api.meta.MetaClass;
 import org.nanotek.ormservice.api.meta.MetaDataAttribute;
 import org.nanotek.ormservice.api.meta.MetaRelation;
 import org.nanotek.ormservice.api.meta.RelationType;
+import org.nanotek.ormservice.api.meta.builder.MetaClassDynamicTypeBuilder;
 
 import lombok.Getter;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.ClassFileVersion;
 import net.bytebuddy.description.type.TypeDefinition;
 import net.bytebuddy.description.type.TypeDescription;
+import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.dynamic.DynamicType.Loaded;
 import net.bytebuddy.jar.asm.Opcodes;
 /**
@@ -62,7 +67,7 @@ public class MetaModel <T extends MetaClass> {
 	
 	public MetaModel<?> defineAttribute(MetaDataAttribute provider) {
 		return validateAttribute(provider)
-					.filter(clazz::addMetaAttribute)
+					.filter(a -> clazz.addMetaAttribute(a))
 					.map(this::createAccessorMutatorInterface)
 					.map(this::registerAttribute)
 					.orElseThrow();
@@ -119,5 +124,27 @@ public class MetaModel <T extends MetaClass> {
 	public Set<?> validate(Validator validator){
 		return validator.validate(clazz, Default.class);
 	}
+	
+	public Builder<?> buildFromModel(Builder<?> builder)
+	{
+			return 	builder
+						.implement(getInterfacesFromRegistry());
+	}
+
+	public void andBuild() {
+		Builder<?> builder = MetaClassDynamicTypeBuilder.instance().build(clazz);
+		buildFromModel(builder);
+	}
+	
+	private TypeDescription[] getInterfacesFromRegistry() {
+		
+		List<TypeDescription> lt = attributeRegistry
+			.values()
+			.stream()
+			.map(l -> l.getTypeDescription())
+			.collect(Collectors.toList());
+		return lt.toArray(new TypeDescription[lt.size()]);
+	}
+	
 
 }
