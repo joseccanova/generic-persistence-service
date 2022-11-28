@@ -3,11 +3,14 @@ package org.nanotek.ormservice.api.meta;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.validation.Valid;
+
+import org.hibernate.mapping.MetaAttribute;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -59,10 +62,9 @@ public class MetaClass  {
 	protected MetaIdentity identity;
 
 	public boolean addMetaAttribute(MetaDataAttribute attr) {
-		if (metaAttributes==null)
-			return	createAndAdd(ArrayList::new, attr);
-		else 
-			return metaAttributes.add(attr);
+		return metaAttributes==null ? 
+			createAndAdd(ArrayList::new, attr)
+			: metaAttributes.add(attr);
 	}
 
 	private boolean createAndAdd(Supplier<List<MetaDataAttribute>> sup , MetaDataAttribute attr) {

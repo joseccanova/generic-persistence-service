@@ -7,6 +7,7 @@ import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -132,10 +133,12 @@ public class MetaClassBasicTests {
 				.intialize(mc, classLoader))
 		.map(m->m.defineAttribute(createStringMetaAttribute()))
 		.map(m->m.defineAttribute(createLongMetaAttribute()))
+		.map(m -> m.defineAttribute(createDateMetaAttribute()))
 		.orElseThrow();
 		changeName(mm.getClazz(), "Test4Instance");
 		createIdentity(mm.getClazz());
 		try {
+			mm.serializeInterfaces();
 			Builder<?> db = MetaClassDynamicTypeBuilder.instance().build(mm.getClazz());
 			Loaded<?> loaded = mm.buildFromModel(db).make().load(classLoader);
 			Optional
@@ -247,6 +250,16 @@ public class MetaClassBasicTests {
 		assertTrue(mt.addMetaAttribute(createStringMetaAttribute()));
 		return mt;
 	}
+	
+	private MetaDataAttribute createDateMetaAttribute() {
+		return MetaDataAttribute
+				.builder()
+				.attributeType(AttributeType.Single)
+				.fieldName("datt1")
+				.clazz(Date.class)
+				.columnName("dattc1").build();
+	}
+
 
 	private MetaDataAttribute createLongMetaAttribute() {
 		return MetaDataAttribute

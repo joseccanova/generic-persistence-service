@@ -1,6 +1,7 @@
 package org.nanotek.ormservice.api.meta.model;
 
-import java.lang.reflect.Type;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,7 +68,7 @@ public class MetaModel <T extends MetaClass> {
 	
 	public MetaModel<?> defineAttribute(MetaDataAttribute provider) {
 		return validateAttribute(provider)
-					.filter(a -> clazz.addMetaAttribute(a))
+					.filter(clazz::addMetaAttribute)
 					.map(this::createAccessorMutatorInterface)
 					.map(this::registerAttribute)
 					.orElseThrow();
@@ -144,6 +145,17 @@ public class MetaModel <T extends MetaClass> {
 			.map(l -> l.getTypeDescription())
 			.collect(Collectors.toList());
 		return lt.toArray(new TypeDescription[lt.size()]);
+	}
+
+	public void serializeInterfaces() {
+		attributeRegistry.values().stream()
+		.forEach(l -> {
+			try {
+				l.saveIn(new File("c:/java"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		});
 	}
 	
 
