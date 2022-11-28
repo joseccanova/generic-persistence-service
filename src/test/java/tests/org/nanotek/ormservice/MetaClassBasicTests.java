@@ -128,10 +128,11 @@ public class MetaClassBasicTests {
 	@Order(2)
 	public void testMetaModel() {
 		MetaModel<?> mm =  createBasicMetaClass()
-		.map(m-> MetaModel
-				.intialize(m, classLoader))
+		.map(mc-> MetaModel
+				.intialize(mc, classLoader))
 		.map(m->m.defineAttribute(createStringMetaAttribute()))
-		.map(m->m.defineAttribute(createLongMetaAttribute())).orElseThrow();
+		.map(m->m.defineAttribute(createLongMetaAttribute()))
+		.orElseThrow();
 		changeName(mm.getClazz(), "Test4Instance");
 		createIdentity(mm.getClazz());
 		try {
@@ -140,7 +141,7 @@ public class MetaClassBasicTests {
 			Optional
 			.of(loaded)
 //			.map(l -> l.getLoaded())
-			.map(clazz -> checkInstance(clazz))
+			.map(l -> checkInstance(l))
 			.ifPresentOrElse(i -> log.debug("the instance {}" , i), RuntimeException::new);
 		} catch (Exception e) {
 			log.debug("the problem {}" , e);

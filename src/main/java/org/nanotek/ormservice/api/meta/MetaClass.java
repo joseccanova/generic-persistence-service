@@ -65,9 +65,8 @@ public class MetaClass  {
 			return metaAttributes.add(attr);
 	}
 
-	private Boolean createAndAdd(Supplier<List<MetaDataAttribute>> sup , MetaDataAttribute attr) {
-		metaAttributes = sup.get();
-		return metaAttributes.add(attr);
+	private boolean createAndAdd(Supplier<List<MetaDataAttribute>> sup , MetaDataAttribute attr) {
+		return (metaAttributes = sup.get()).add(attr);
 	}
 
 	public void hasPrimaryKey(boolean b) {
@@ -92,5 +91,9 @@ public class MetaClass  {
 	
 	public List<MetaRelation> setRelations(Supplier<List<MetaRelation>> rl) {
 		return rl.get();
+	}
+	
+	public Optional<MetaClass> and(){
+		return Optional.of(this);
 	}
 }
