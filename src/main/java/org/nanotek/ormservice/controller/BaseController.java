@@ -19,11 +19,12 @@ implements UrlBaseLocator {
 
 	protected S service;
 	
-	public BaseController(S serv) {
+	protected BaseController(S serv) {
 		this.service = serv;
 	}
 	
-	public BaseController() { 
+	protected BaseController() { 
+		super();
 	}
 	
 	@ApiResponses(value = {
@@ -32,7 +33,7 @@ implements UrlBaseLocator {
 			@ApiResponse(message = "RuntimeException  - " , code = 500) 
 	})
 	@DeleteMapping(path="/delete-list")
-	public ResponseEntity<?> deleteAll(@RequestBody List<T> items){
+	public ResponseEntity<Boolean> deleteAll(@RequestBody List<T> items){
 		service.deleteAll(items);
 		return ResponseEntity.accepted().body(true);
 	}
@@ -43,7 +44,7 @@ implements UrlBaseLocator {
 			@ApiResponse(message = "RuntimeException  - " , code = 500) 
 	})
 	@PutMapping(path="/update-list")
-	public ResponseEntity<?> salveAll(@RequestBody List<T> items){
+	public ResponseEntity<List<T>> salveAll(@RequestBody List<T> items){
 		return ResponseEntity.accepted().body(service.saveAll(items));
 	}
 	

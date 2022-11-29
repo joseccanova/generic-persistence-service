@@ -36,6 +36,7 @@ public class SimpleIdType implements IBase<Long>{
 	private String name;
 	
 	public SimpleIdType() {
+		super();
 	}
 
 	public Long getId() {

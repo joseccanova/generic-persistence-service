@@ -4,8 +4,10 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.nanotek.ormservice.IBase;
+import org.nanotek.ormservice.service.ServiceRuntimeException;
 import org.nanotek.ormservice.EntityExceptionSupplierFactory;
 import org.nanotek.ormservice.EntityRepository;
 import org.springframework.beans.BeanWrapper;
@@ -24,7 +26,7 @@ extends SearchServiceImpl<T,R>{
 	@Autowired
 	protected EntityExceptionSupplierFactory exceptionSupplierFactory;
 
-	public BaseServiceImpl(R repository) {
+	protected BaseServiceImpl(R repository) {
 		super();
 		this.repository = repository;
 	}
@@ -162,10 +164,10 @@ extends SearchServiceImpl<T,R>{
 						BeanWrapper bw = new BeanWrapperImpl(entity);
 						PropertyDescriptor pd = bw.getPropertyDescriptor(attributeName);
 						try {
-							Object o = pd.getReadMethod().invoke(entity, new Object[0]);
+							Object o = pd.getReadMethod().invoke(entity, Stream.ofNullable(null).toArray());
 							bw.setPropertyValue(attributeName, o);
 						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-							throw new RuntimeException(e);
+							throw new ServiceRuntimeException(e);
 						}
 						return entity;
 					})

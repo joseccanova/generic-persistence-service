@@ -1,5 +1,6 @@
 package org.nanotek.ormservice;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.function.Supplier;
@@ -16,18 +17,17 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 @MappedSuperclass
-@SuppressWarnings("serial")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.LowerCamelCaseStrategy.class)
 @Valid
-public abstract class Base<ID> implements IBase<ID> {
+public interface Base<T extends Serializable> extends IBase<T> {
 
 	public static <K extends Base<?>> K newType(Supplier<K> baseSupplier)
 	{ 
 		return baseSupplier.get();
 	}
 	
-	public Object getProperty(Field f, Base<ID> base) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	default Object getProperty(Field f, Base<T> base) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		return 	PropertyUtils.getProperty(base, f.getName());
 	}
 	

@@ -30,9 +30,9 @@ public abstract class SearchServiceImpl<T extends IBase<?>, R extends EntityRepo
 		Example<T> ex = Example.of(entity,matcher);
 		Pageable pageRequest = Optional
 		.ofNullable(entityContainer.getSortParameters())
-		.filter(sp -> sp.keySet().size()>0)
+		.filter(sp -> !sp.keySet().isEmpty())
 		.map(sp ->{
-			List<Order> sortOrder = new ArrayList<Order>();
+			List<Order> sortOrder = new ArrayList<>();
 			sp
 			.keySet()
 			.stream()

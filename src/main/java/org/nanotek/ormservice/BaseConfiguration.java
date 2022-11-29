@@ -1,5 +1,8 @@
 package org.nanotek.ormservice;
 
+import static org.hibernate.cfg.AvailableSettings.FORMAT_SQL;
+import static org.hibernate.cfg.AvailableSettings.SHOW_SQL;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,7 +10,6 @@ import java.util.Map;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-import org.hibernate.cfg.Environment;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.nanotek.ormservice.api.meta.MetaClass;
 import org.nanotek.ormservice.api.meta.builder.MetaClassDynamicTypeBuilder;
@@ -44,15 +46,6 @@ import net.bytebuddy.dynamic.loading.MultipleParentClassLoader;
 		, transactionManagerRef = "transactionManager")
 public class BaseConfiguration implements ApplicationContextAware{
 
-	/*
-	 * @Bean(name="Reflections")
-	 * 
-	 * @Qualifier(value="Reflections") public Reflections getReflections() { return
-	 * new Reflections(new ConfigurationBuilder()
-	 * .setUrls(ClasspathHelper.forPackage("org.nanotek.ormservice.api"))
-	 * .setScanners(new SubTypesScanner(), new TypeAnnotationsScanner())); }
-	 */
-	
 	@Primary
 	@Bean(name = "defaultDataSourceProperties")
 	@ConfigurationProperties(prefix = "spring.datasource")
@@ -88,9 +81,10 @@ public class BaseConfiguration implements ApplicationContextAware{
 	@Bean(name = "entityManagerFactory")
 	@Qualifier(value="entityManagerFactory")
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory(@Autowired DataSource dataSource , @Autowired DefaultPersistenceUnitManager pum ) {
-		 Map<String, Object> jpaPropertiesMap = new HashMap<>();
-	        jpaPropertiesMap.put(Environment.FORMAT_SQL, true);
-	        jpaPropertiesMap.put(Environment.SHOW_SQL, true);
+		 
+	Map<String, Object> jpaPropertiesMap = new HashMap<>();
+	        jpaPropertiesMap.put(FORMAT_SQL, true);
+	        jpaPropertiesMap.put(SHOW_SQL, true);
 	        jpaPropertiesMap.put("hibernate.globally_quoted_identifiers", true);
 	        jpaPropertiesMap.put("hibernate.transaction.flush_before_completion"  , true);
 	        jpaPropertiesMap.put("hibernate.transaction.auto_close_session" , true);
@@ -105,9 +99,8 @@ public class BaseConfiguration implements ApplicationContextAware{
 		LocalContainerEntityManagerFactoryBean factory =  new LocalContainerEntityManagerFactoryBean();
 		factory.setJpaPropertyMap(jpaPropertiesMap);
 		factory.setDataSource(dataSource);
-//		factory.setPersistenceUnitManager(pum);
 		factory.setPersistenceProviderClass(HibernatePersistenceProvider.class);
-		factory.setPackagesToScan(new String []{"org.nanotek.ormservice.api.base"});
+		factory.setPackagesToScan("org.nanotek.ormservice.api.base");
 		return factory;
 	}
 	

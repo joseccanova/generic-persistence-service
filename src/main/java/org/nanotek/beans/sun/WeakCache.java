@@ -41,7 +41,7 @@ import java.util.WeakHashMap;
  * @author Sergey A. Malenkov
  */
 public final class WeakCache<K, V> {
-    private final Map<K, Reference<V>> map = new WeakHashMap<K, Reference<V>>();
+    private final Map<K, Reference<V>> map = new WeakHashMap<>();
 
     /**
      * Returns a value to which the specified {@code key} is mapped,
@@ -74,7 +74,7 @@ public final class WeakCache<K, V> {
      */
     public void put(K key, V value) {
         if (value != null) {
-            this.map.put(key, new WeakReference<V>(value));
+            this.map.put(key, new WeakReference<>(value));
         }
         else {
             this.map.remove(key);
