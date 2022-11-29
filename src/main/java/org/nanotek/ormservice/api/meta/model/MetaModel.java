@@ -138,7 +138,6 @@ public class MetaModel <T extends MetaClass> {
 	}
 	
 	private TypeDescription[] getInterfacesFromRegistry() {
-		
 		List<TypeDescription> lt = attributeRegistry
 			.values()
 			.stream()
